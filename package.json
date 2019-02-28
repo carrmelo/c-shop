@@ -5,6 +5,9 @@
   "repository": "c-shop",
   "main": "server.ts",
   "scripts": {
+    "build": "tsc",
+    "serve": "ts-node src/server.ts",
+    "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Carmelo Carrillo",
