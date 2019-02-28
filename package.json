@@ -2,6 +2,7 @@
   "name": "c-shop",
   "version": "1.0.0",
   "description": "api for simple shop including customers and users",
+  "repository": "c-shop",
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +20,10 @@
     "typeorm": "^0.2.14"
   },
   "devDependencies": {
+    "@types/koa": "^2.0.48",
+    "@types/koa-bodyparser": "^4.2.2",
+    "@types/koa-router": "^7.0.40",
+    "@types/node": "^8.10.40",
     "nodemon": "^1.18.10",
     "ts-node": "^8.0.2",
     "tslint": "^5.13.0",
