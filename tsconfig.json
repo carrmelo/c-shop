@@ -7,6 +7,6 @@
     "rootDir": "src",
     "noImplicitAny": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": false
+    "emitDecoratorMetadata": true
   }
 }
