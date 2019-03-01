@@ -12,12 +12,12 @@ const router: Router = new Router(routerOpts);
 
 router.get('/', async (ctx: Koa.Context) => {
   // Get the customer repository
-  const customersRepo: Repository<customerEntity> = getRepository(
+  const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
 
   // Find the requested customer
-  const customers = await customersRepo.find();
+  const customers = await customerRepo.find();
 
   // Respond with the customer data
   ctx.body = { data: { customers } };
@@ -28,6 +28,21 @@ router.get('/:customer_id', async (ctx: Koa.Context) => {
 });
 
 router.post('/', async (ctx: Koa.Context) => {
+  // Get the customer repository
+  const customerRepo: Repository<customerEntity> = getRepository(
+    customerEntity,
+  );
+
+  const { name, surname, picture } = ctx.request.body;
+  // Create the customer
+  const customer: customerEntity = customerRepo.create({
+    name,
+    surname,
+    picture,
+  });
+
+  await customerRepo.save(customer);
+  console.log(customer);
   ctx.body = 'POST';
 });
 

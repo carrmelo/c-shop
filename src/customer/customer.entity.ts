@@ -14,9 +14,9 @@ export default class Customer {
   @Column()
   picture: string;
 
-  @Column()
+  @Column({ nullable: true })
   createdBy: string;
 
-  @Column()
+  @Column({ nullable: true })
   modifiedBy: string;
 }
