@@ -20,6 +20,7 @@ router.get('/', async (ctx: Koa.Context) => {
   const customers = await customerRepo.find();
 
   // Respond with the customer data
+  ctx.status = HttpStatus.OK;
   ctx.body = { data: { customers } };
 });
 
@@ -33,17 +34,19 @@ router.post('/', async (ctx: Koa.Context) => {
     customerEntity,
   );
 
-  const { name, surname, picture } = ctx.request.body;
-  // Create the customer
+  const { name, surname, pictureUrl } = ctx.request.body;
+
+  // Create the customer and save it to the DB
   const customer: customerEntity = customerRepo.create({
     name,
     surname,
-    picture,
+    pictureUrl,
   });
+  const newCustomer = await customerRepo.save(customer);
 
-  await customerRepo.save(customer);
-  console.log(customer);
-  ctx.body = 'POST';
+  // Respond with the created customer
+  ctx.status = HttpStatus.CREATED;
+  ctx.body = { data: newCustomer };
 });
 
 router.delete('/:customer_id', async (ctx: Koa.Context) => {

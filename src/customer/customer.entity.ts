@@ -12,7 +12,7 @@ export default class Customer {
   surname: string;
 
   @Column()
-  picture: string;
+  pictureUrl: string;
 
   @Column({ nullable: true })
   createdBy: string;
