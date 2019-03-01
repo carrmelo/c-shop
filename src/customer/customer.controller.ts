@@ -33,7 +33,7 @@ router.get('/:customer_id', async (ctx: Koa.Context) => {
   // Find the requested customer
   const customer = await customerRepo.findOne(ctx.params.customer_id);
 
-  // If there's no customer send thow to Error Handler middleware
+  // If there's no customer throw to Error Handler middleware
   if (!customer) {
     ctx.throw(HttpStatus.NOT_FOUND);
   }
@@ -65,11 +65,47 @@ router.post('/', async (ctx: Koa.Context) => {
 });
 
 router.delete('/:customer_id', async (ctx: Koa.Context) => {
-  ctx.body = 'DELETE';
+  // Get the customer repo
+  const customerRepo: Repository<customerEntity> = getRepository(
+    customerEntity,
+  );
+
+  // Find the requested customer
+  const customer = await customerRepo.findOne(ctx.params.customer_id);
+
+  // If there's no customer throw to Error Handler middleware
+  if (!customer) {
+    ctx.throw(HttpStatus.NOT_FOUND);
+  }
+
+  // Delete our customer
+  await customerRepo.delete(customer);
+
+  // Respond with NO CONTENT
+  ctx.status = HttpStatus.NO_CONTENT;
 });
 
 router.patch('/:customer_id', async (ctx: Koa.Context) => {
-  ctx.body = 'GET ALL';
+  // Get the customer repo
+  const customerRepo: Repository<customerEntity> = getRepository(
+    customerEntity,
+  );
+
+  // Find the requested customer
+  const customer = await customerRepo.findOne(ctx.params.customer_id);
+
+  // If there's no customer throw to Error Handler middleware
+  if (!customer) {
+    ctx.throw(HttpStatus.NOT_FOUND);
+  }
+
+  // Merge the existing customer with the new data
+  const updatedCustomer = await customerRepo.merge(customer, ctx.rquest.body);
+  customerRepo.save(updatedCustomer);
+
+  // Respond with ACCEPTED status and updated data
+  ctx.status = HttpStatus.ACCEPTED;
+  ctx.body = { data: { customer: updatedCustomer } };
 });
 
 export default router;
