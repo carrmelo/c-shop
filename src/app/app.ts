@@ -8,21 +8,21 @@ require('dotenv').config();
 
 const app: Koa = new Koa();
 
-// Initial generic error handling middleware.
-app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
-  try {
-    await next();
-  } catch (error) {
-    ctx.status =
-      error.statusCode || error.status || HttpStatus.INTERNAL_SERVER_ERROR;
-    error.status = ctx.status;
-    ctx.body = { error };
-    ctx.app.emit('error', error, ctx);
-  }
-});
-
-// Initial route
 app
+  // Initial generic error handling middleware.
+  .use(async (ctx: Koa.Context, next: () => Promise<any>) => {
+    try {
+      await next();
+    } catch (error) {
+      ctx.status =
+        error.statusCode || error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      error.status = ctx.status;
+      ctx.body = { error };
+      ctx.app.emit('error', error, ctx);
+    }
+  })
+
+  // Routes middleware
   .use(customerController.routes())
   .use(userController.routes())
   .use(customerController.allowedMethods());
