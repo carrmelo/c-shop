@@ -9,7 +9,7 @@ const connectionOpts: ConnectionOptions = {
   port: Number(process.env.DB_PORT) || 5432,
   username: process.env.DB_USERNAME || 'postgers',
   password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_NAME || 'c-shop',
+  database: process.env.DB_NAME || 'car',
   entities: [`${parentDir}/**/*.entity.ts`],
   synchronize: true,
 };
