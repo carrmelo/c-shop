@@ -25,7 +25,22 @@ router.get('/', async (ctx: Koa.Context) => {
 });
 
 router.get('/:customer_id', async (ctx: Koa.Context) => {
-  ctx.body = 'GET SINGLE';
+  // Get the customer repository
+  const customerRepo: Repository<customerEntity> = getRepository(
+    customerEntity,
+  );
+
+  // Find the requested customer
+  const customer = await customerRepo.findOne(ctx.params.customer_id);
+
+  // If there's no customer send thow to Error Handler middleware
+  if (!customer) {
+    ctx.throw(HttpStatus.NOT_FOUND);
+  }
+
+  // Respond with customer
+  ctx.status = HttpStatus.OK;
+  ctx.body = { data: { customer } };
 });
 
 router.post('/', async (ctx: Koa.Context) => {
