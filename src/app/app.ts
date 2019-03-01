@@ -1,5 +1,6 @@
 import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
+import * as bodyParser from 'koa-bodyparser';
 import customerController from '../customer/customer.controller';
 import userController from '../user/user.controller';
 
@@ -9,6 +10,8 @@ require('dotenv').config();
 const app: Koa = new Koa();
 
 app
+  .use(bodyParser())
+
   // Initial generic error handling middleware.
   .use(async (ctx: Koa.Context, next: () => Promise<any>) => {
     try {
