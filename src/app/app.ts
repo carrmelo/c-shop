@@ -1,5 +1,6 @@
 import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
+import customerController from '../customer/customer.controller';
 
 // Load enviroment configuration
 require('dotenv').config();
@@ -20,9 +21,7 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
 });
 
 // Initial route
-app.use(async (ctx: Koa.Context) => {
-  ctx.body = 'Start your engines!';
-});
+app.use(customerController.routes()).use(customerController.allowedMethods());
 
 // Application error logging.
 app.on('error', console.error);
