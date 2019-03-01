@@ -1,6 +1,9 @@
 import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
 
+// Load enviroment configuration
+require('dotenv').config();
+
 const app: Koa = new Koa();
 
 // Initial generic error handling middleware.
