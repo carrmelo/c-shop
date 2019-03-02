@@ -1,7 +1,6 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
 import { getRepository, Repository } from 'typeorm';
-import customerEntity from './customer.entity';
 import {
   OK,
   NOT_FOUND,
@@ -9,6 +8,7 @@ import {
   NO_CONTENT,
   ACCEPTED,
 } from 'http-status-codes';
+import customerEntity from './customer.entity';
 
 const routerOpts: Router.IRouterOptions = {
   prefix: '/customers',

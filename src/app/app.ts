@@ -1,8 +1,10 @@
 import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
 import * as bodyParser from 'koa-bodyparser';
+import * as jwt from 'koa-jwt';
 import customerController from '../customer/customer.controller';
 import userController from '../user/user.controller';
+import authController from '../auth/auth.controller';
 
 // Load enviroment configuration
 require('dotenv').config();
@@ -26,6 +28,8 @@ app
   })
 
   // Routes middleware
+  .use(authController.routes())
+  .use(jwt({ secret: process.env.APP_SECRET, passthrough: true }))
   .use(customerController.routes())
   .use(userController.routes())
   .use(customerController.allowedMethods());
