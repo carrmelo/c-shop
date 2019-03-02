@@ -8,7 +8,7 @@ import {
   NO_CONTENT,
   ACCEPTED,
 } from 'http-status-codes';
-import { hash } from 'bcryptjs';
+import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../user/user.entity';
 
@@ -44,6 +44,23 @@ router.post('/up', async (ctx: Koa.Context) => {
 
   ctx.status = CREATED;
   ctx.body = { token, data: newUser };
+});
+
+router.post('/in', async (ctx: Koa.Context) => {
+  const userRepo: Repository<userEntity> = getRepository(userEntity);
+
+  const { email, password } = ctx.request.body;
+
+  const [user] = await userRepo.find({ where: { email } });
+  if (!user) throw ctx.throw(NOT_FOUND);
+
+  const valid = await compare(password, user.password);
+  if (!valid) throw ctx.throw(NOT_FOUND);
+
+  const token = sign({ userId: user.id }, process.env.APP_SECRET);
+
+  ctx.status = CREATED;
+  ctx.body = { token, data: { user, lol: 'LOL' } };
 });
 
 export default router;
