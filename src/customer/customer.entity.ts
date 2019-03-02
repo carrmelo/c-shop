@@ -14,7 +14,7 @@ export default class Customer {
   @Column()
   pictureUrl: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) // TODO readonly: true
   createdBy: string;
 
   @Column({ nullable: true })
