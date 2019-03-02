@@ -29,11 +29,14 @@ app
 
   // Routes middleware
   .use(authController.routes())
-  .use(jwt({ secret: process.env.APP_SECRET, passthrough: true }))
+  .use(jwt({ secret: process.env.APP_SECRET }))
   .use(customerController.routes())
   .use(userController.routes())
-  .use(customerController.allowedMethods());
-
+  .use(customerController.allowedMethods())
+  .use(async (ctx, next) => {
+    ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+    await next();
+  });
 // Application error logging.
 app.on('error', console.error);
 

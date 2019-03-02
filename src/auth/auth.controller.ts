@@ -25,8 +25,6 @@ router.post('/up', async (ctx: Koa.Context) => {
 
   const hashPassword = await hash(password, 10);
 
-  // Check email
-
   const user: userEntity = userRepo.create({
     name,
     email: email.toLowerCase(),
@@ -35,11 +33,17 @@ router.post('/up', async (ctx: Koa.Context) => {
   });
   const newUser = await userRepo.save(user);
 
-  const token = sign({ userId: newUser.id }, process.env.APP_SECRET);
-  console.log(newUser);
+  // Token expiration set to 1 Hour
+  const token = sign(
+    {
+      userId: newUser.id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    },
+    process.env.APP_SECRET,
+  );
 
   ctx.status = CREATED;
-  ctx.body = { data: newUser };
+  ctx.body = { token, data: newUser };
 });
 
 export default router;

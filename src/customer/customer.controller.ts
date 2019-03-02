@@ -7,6 +7,7 @@ import {
   CREATED,
   NO_CONTENT,
   ACCEPTED,
+  getStatusText,
 } from 'http-status-codes';
 import customerEntity from './customer.entity';
 
@@ -25,7 +26,7 @@ router.get('/', async (ctx: Koa.Context) => {
   const customers = await customerRepo.find();
 
   ctx.status = OK;
-  ctx.body = { data: { customers } };
+  ctx.body = { data: { customers, user: ctx.state.user } };
 });
 
 router.get('/:customer_id', async (ctx: Koa.Context) => {
