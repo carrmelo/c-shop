@@ -1,22 +1,10 @@
 import * as Koa from 'koa';
 import { getRepository, Repository } from 'typeorm';
-import {
-  OK,
-  NOT_FOUND,
-  NO_CONTENT,
-  ACCEPTED,
-  FORBIDDEN,
-} from 'http-status-codes';
+import { OK, NOT_FOUND, NO_CONTENT, ACCEPTED } from 'http-status-codes';
 import userEntity from '../models/user.entity';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
-
-  const currentUser = await userRepo.findOne(ctx.state.user.id);
-
-  if (!currentUser.isAdmin) {
-    ctx.throw(FORBIDDEN);
-  }
 
   const users = await userRepo.find();
 
@@ -26,12 +14,6 @@ export const getAllUsers = async (ctx: Koa.Context) => {
 
 export const getUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
-
-  const currentUser = await userRepo.findOne(ctx.state.user.id);
-
-  if (!currentUser.isAdmin) {
-    ctx.throw(FORBIDDEN);
-  }
 
   const user = await userRepo.findOne(ctx.params.user_id);
 
@@ -46,12 +28,6 @@ export const getUser = async (ctx: Koa.Context) => {
 export const deleteUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const currentUser = await userRepo.findOne(ctx.state.user.id);
-
-  if (!currentUser.isAdmin) {
-    ctx.throw(FORBIDDEN);
-  }
-
   const user = await userRepo.findOne(ctx.params.user_id);
 
   if (!user) {
@@ -65,12 +41,6 @@ export const deleteUser = async (ctx: Koa.Context) => {
 
 export const editUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
-
-  const currentUser = await userRepo.findOne(ctx.state.user.id);
-
-  if (!currentUser.isAdmin) {
-    ctx.throw(FORBIDDEN);
-  }
 
   const user = await userRepo.findOne(ctx.params.user_id);
 
