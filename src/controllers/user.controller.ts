@@ -7,6 +7,7 @@ export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const users = await userRepo.find();
+  users.map(user => delete user.password);
 
   ctx.status = OK;
   ctx.body = { data: { users } };
@@ -18,9 +19,10 @@ export const getUser = async (ctx: Koa.Context) => {
   const user = await userRepo.findOne(ctx.params.user_id);
 
   if (!user) {
-    ctx.throw(NOT_FOUND);
+    throw ctx.throw(NOT_FOUND);
   }
 
+  delete user.password;
   ctx.status = OK;
   ctx.body = { data: { user } };
 };
@@ -50,7 +52,7 @@ export const editUser = async (ctx: Koa.Context) => {
 
   const updatedUser = await userRepo.merge(user, ctx.rquest.body);
   userRepo.save(updatedUser);
-
+  delete updatedUser.password;
   ctx.status = ACCEPTED;
   ctx.body = { data: { user: updatedUser } };
 };
