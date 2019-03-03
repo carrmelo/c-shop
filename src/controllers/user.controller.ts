@@ -12,16 +12,16 @@ import userEntity from '../models/user.entity';
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  // const currentUser = await userRepo.findOne(ctx.state.user.id);
+  const currentUser = await userRepo.findOne(ctx.state.user.id);
 
-  // if (!currentUser.isAdmin) {
-  //   ctx.throw(FORBIDDEN);
-  // }
+  if (!currentUser.isAdmin) {
+    ctx.throw(FORBIDDEN);
+  }
 
   const users = await userRepo.find();
 
   ctx.status = OK;
-  ctx.body = { data: { users, ctx: ctx.state } };
+  ctx.body = { data: { users } };
 };
 
 export const getUser = async (ctx: Koa.Context) => {

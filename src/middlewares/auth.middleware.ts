@@ -1,6 +1,7 @@
 import * as Koa from 'koa';
+import { UNAUTHORIZED } from 'http-status-codes';
 
-export default (ctx: Koa.Context, next: any) => {
-  ctx.assert(ctx.state.user, 401, 'You need to log in to do this');
+export default (ctx: Koa.Context, next: () => Promise<any>) => {
+  ctx.assert(ctx.state.user, UNAUTHORIZED);
   return next();
 };

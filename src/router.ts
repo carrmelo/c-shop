@@ -1,7 +1,7 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
 import authMiddleware from './middlewares/auth.middleware';
-import jwt from './middlewares/jwt.middleware';
+import adminMiddleware from './middlewares/admin.middleware';
 import {
   authController,
   userController,
@@ -46,10 +46,20 @@ const userOpts: Router.IRouterOptions = {
 
 const users: Router = new Router(userOpts);
 
-users.get('/', authMiddleware, userController.getAllUsers);
-users.get('/:user_id', authMiddleware, userController.getUser);
-users.delete('/:user_id', authMiddleware, userController.deleteUser);
-users.patch('/:user_id', authMiddleware, userController.editUser);
+users.get('/', authMiddleware, adminMiddleware, userController.getAllUsers);
+users.get('/:user_id', authMiddleware, adminMiddleware, userController.getUser);
+users.delete(
+  '/:user_id',
+  authMiddleware,
+  adminMiddleware,
+  userController.deleteUser,
+);
+users.patch(
+  '/:user_id',
+  authMiddleware,
+  adminMiddleware,
+  userController.editUser,
+);
 
 // Combine routers
 const router: Router = new Router();
