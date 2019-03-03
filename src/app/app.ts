@@ -28,11 +28,8 @@ app
   // Routes middleware
   .use(jwt({ secret: process.env.APP_SECRET }).unless({ path: [/^\/sign/] }))
   .use(router.routes())
-  .use(router.allowedMethods())
-  .use(async (ctx, next) => {
-    ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-    await next();
-  });
+  .use(router.allowedMethods());
+
 // Application error logging.
 app.on('error', console.error);
 

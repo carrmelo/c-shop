@@ -13,8 +13,8 @@ export default class Customer {
 
   @Column()
   pictureUrl: string;
-
-  @Column({ nullable: true }) // TODO readonly: true
+  // Relations for created and modified
+  @Column({ readonly: true })
   createdBy: string;
 
   @Column({ nullable: true })

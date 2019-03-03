@@ -10,7 +10,6 @@ import {
 import customerEntity from '../customer/customer.entity';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
-  // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
@@ -22,7 +21,6 @@ export const getAllCustomers = async (ctx: Koa.Context) => {
 };
 
 export const getCustomer = async (ctx: Koa.Context) => {
-  // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
@@ -38,17 +36,18 @@ export const getCustomer = async (ctx: Koa.Context) => {
 };
 
 export const createCustomer = async (ctx: Koa.Context) => {
-  // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
 
   const { name, surname, pictureUrl } = ctx.request.body;
-  // TODO createdBy
+  const createdBy = ctx.state.user.userId;
+
   const customer: customerEntity = customerRepo.create({
     name,
     surname,
     pictureUrl,
+    createdBy,
   });
   const newCustomer = await customerRepo.save(customer);
 
@@ -57,7 +56,6 @@ export const createCustomer = async (ctx: Koa.Context) => {
 };
 
 export const deleteCustomer = async (ctx: Koa.Context) => {
-  // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
@@ -74,7 +72,6 @@ export const deleteCustomer = async (ctx: Koa.Context) => {
 };
 
 export const editCustomer = async (ctx: Koa.Context) => {
-  // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
@@ -84,8 +81,10 @@ export const editCustomer = async (ctx: Koa.Context) => {
   if (!customer) {
     ctx.throw(NOT_FOUND);
   }
-  // TODO lastModifiedBy
-  const updatedCustomer = await customerRepo.merge(customer, ctx.rquest.body);
+
+  ctx.request.body.modifiedBy = ctx.state.user.userId;
+
+  const updatedCustomer = await customerRepo.merge(customer, ctx.request.body);
   customerRepo.save(updatedCustomer);
 
   ctx.status = ACCEPTED;
