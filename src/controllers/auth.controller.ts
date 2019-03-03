@@ -1,12 +1,6 @@
 import * as Koa from 'koa';
 import { getRepository, Repository } from 'typeorm';
-import {
-  OK,
-  NOT_FOUND,
-  CREATED,
-  NO_CONTENT,
-  ACCEPTED,
-} from 'http-status-codes';
+import { OK, NOT_FOUND, CREATED } from 'http-status-codes';
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../user/user.entity';

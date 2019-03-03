@@ -2,9 +2,7 @@ import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
 import * as bodyParser from 'koa-bodyparser';
 import * as jwt from 'koa-jwt';
-import customerController from '../controllers/customer.controller';
-import userController from '../controllers/user.controller';
-import sign from '../router';
+import router from '../router';
 
 // Load enviroment configuration
 require('dotenv').config();
@@ -28,11 +26,9 @@ app
   })
 
   // Routes middleware
-  .use(sign.routes())
-  .use(jwt({ secret: process.env.APP_SECRET }))
-  // .use(customerController.routes())
-  // .use(userController.routes())
-  // .use(customerController.allowedMethods())
+  .use(jwt({ secret: process.env.APP_SECRET }).unless({ path: [/^\/sign/] }))
+  .use(router.routes())
+  .use(router.allowedMethods())
   .use(async (ctx, next) => {
     ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
     await next();

@@ -1,5 +1,4 @@
 import * as Koa from 'koa';
-import * as Router from 'koa-router';
 import { getRepository, Repository } from 'typeorm';
 import {
   OK,
@@ -7,17 +6,10 @@ import {
   CREATED,
   NO_CONTENT,
   ACCEPTED,
-  getStatusText,
 } from 'http-status-codes';
 import customerEntity from '../customer/customer.entity';
 
-const routerOpts: Router.IRouterOptions = {
-  prefix: '/customers',
-};
-
-const router: Router = new Router(routerOpts);
-
-router.get('/', async (ctx: Koa.Context) => {
+export const getAllCustomers = async (ctx: Koa.Context) => {
   // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
@@ -27,9 +19,9 @@ router.get('/', async (ctx: Koa.Context) => {
 
   ctx.status = OK;
   ctx.body = { data: { customers } };
-});
+};
 
-router.get('/:customer_id', async (ctx: Koa.Context) => {
+export const getCustomer = async (ctx: Koa.Context) => {
   // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
@@ -43,9 +35,9 @@ router.get('/:customer_id', async (ctx: Koa.Context) => {
 
   ctx.status = OK;
   ctx.body = { data: { customer } };
-});
+};
 
-router.post('/', async (ctx: Koa.Context) => {
+export const createCustomer = async (ctx: Koa.Context) => {
   // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
@@ -62,9 +54,9 @@ router.post('/', async (ctx: Koa.Context) => {
 
   ctx.status = CREATED;
   ctx.body = { data: newCustomer };
-});
+};
 
-router.delete('/:customer_id', async (ctx: Koa.Context) => {
+export const deleteCustomer = async (ctx: Koa.Context) => {
   // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
@@ -79,9 +71,9 @@ router.delete('/:customer_id', async (ctx: Koa.Context) => {
   await customerRepo.delete(customer);
 
   ctx.status = NO_CONTENT;
-});
+};
 
-router.patch('/:customer_id', async (ctx: Koa.Context) => {
+export const editCustomer = async (ctx: Koa.Context) => {
   // TODO Authentication
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
@@ -98,6 +90,4 @@ router.patch('/:customer_id', async (ctx: Koa.Context) => {
 
   ctx.status = ACCEPTED;
   ctx.body = { data: { customer: updatedCustomer } };
-});
-
-export default router;
+};
