@@ -1,28 +1,18 @@
 import * as Koa from 'koa';
-import * as Router from 'koa-router';
 import { getRepository, Repository } from 'typeorm';
 import { OK, NOT_FOUND, NO_CONTENT, ACCEPTED } from 'http-status-codes';
-import { hash } from 'bcryptjs';
 import userEntity from '../user/user.entity';
 
-const routerOpts: Router.IRouterOptions = {
-  prefix: '/users',
-};
-
-const router: Router = new Router(routerOpts);
-
-router.get('/', async (ctx: Koa.Context) => {
-  // TODO Authentication
+export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const users = await userRepo.find();
 
   ctx.status = OK;
   ctx.body = { data: { users } };
-});
+};
 
-router.get('/:user_id', async (ctx: Koa.Context) => {
-  // TODO Authentication
+export const getUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const user = await userRepo.findOne(ctx.params.user_id);
@@ -33,9 +23,9 @@ router.get('/:user_id', async (ctx: Koa.Context) => {
 
   ctx.status = OK;
   ctx.body = { data: { user } };
-});
+};
 
-router.delete('/:user_id', async (ctx: Koa.Context) => {
+export const deleteUser = async (ctx: Koa.Context) => {
   // TODO Authentication
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
@@ -48,9 +38,9 @@ router.delete('/:user_id', async (ctx: Koa.Context) => {
   await userRepo.delete(user);
 
   ctx.status = NO_CONTENT;
-});
+};
 
-router.patch('/:user_id', async (ctx: Koa.Context) => {
+export const editUser = async (ctx: Koa.Context) => {
   // TODO Authentication
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
@@ -65,6 +55,4 @@ router.patch('/:user_id', async (ctx: Koa.Context) => {
 
   ctx.status = ACCEPTED;
   ctx.body = { data: { user: updatedUser } };
-});
-
-export default router;
+};
