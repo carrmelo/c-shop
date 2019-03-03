@@ -23,7 +23,7 @@ export const signUp = async (ctx: Koa.Context) => {
   // Token expiration set to 1 Hour
   const token = sign(
     {
-      userId: newUser.id,
+      id: newUser.id,
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
     },
     process.env.APP_SECRET,
@@ -45,7 +45,7 @@ export const signIn = async (ctx: Koa.Context) => {
   if (!valid) throw ctx.throw(NOT_FOUND);
 
   const token = sign(
-    { userId: user.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 },
+    { id: user.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 },
     process.env.APP_SECRET,
   );
 

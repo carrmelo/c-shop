@@ -26,7 +26,7 @@ app
   })
 
   // Routes middleware
-  .use(jwt({ secret: process.env.APP_SECRET }).unless({ path: [/^\/sign/] }))
+  .use(jwt({ secret: process.env.APP_SECRET, passthrough: true }))
   .use(router.routes())
   .use(router.allowedMethods());
 

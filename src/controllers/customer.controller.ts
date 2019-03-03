@@ -17,7 +17,7 @@ export const getAllCustomers = async (ctx: Koa.Context) => {
   const customers = await customerRepo.find();
 
   ctx.status = OK;
-  ctx.body = { data: { customers } };
+  ctx.body = { data: { customers, ctx: ctx.state } };
 };
 
 export const getCustomer = async (ctx: Koa.Context) => {
@@ -41,7 +41,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
   );
 
   const { name, surname, pictureUrl } = ctx.request.body;
-  const createdBy = ctx.state.user.userId;
+  const createdBy = ctx.state.user.id;
 
   const customer: customerEntity = customerRepo.create({
     name,
@@ -82,7 +82,7 @@ export const editCustomer = async (ctx: Koa.Context) => {
     ctx.throw(NOT_FOUND);
   }
 
-  ctx.request.body.modifiedBy = ctx.state.user.userId;
+  ctx.request.body.modifiedBy = ctx.state.user.id;
 
   const updatedCustomer = await customerRepo.merge(customer, ctx.request.body);
   customerRepo.save(updatedCustomer);

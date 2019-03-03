@@ -1,5 +1,7 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
+import authMiddleware from './middlewares/auth.middleware';
+import jwt from './middlewares/jwt.middleware';
 import {
   authController,
   userController,
@@ -23,11 +25,19 @@ const customersOpts: Router.IRouterOptions = {
 
 const customers: Router = new Router(customersOpts);
 
-customers.get('/', customerController.getAllCustomers);
-customers.get('/:customer_id', customerController.getCustomer);
-customers.post('/', customerController.createCustomer);
-customers.delete('/:customer_id', customerController.deleteCustomer);
-customers.patch('/:customer_id', customerController.editCustomer);
+customers.get('/', authMiddleware, customerController.getAllCustomers);
+customers.get('/:customer_id', authMiddleware, customerController.getCustomer);
+customers.post('/', authMiddleware, customerController.createCustomer);
+customers.delete(
+  '/:customer_id',
+  authMiddleware,
+  customerController.deleteCustomer,
+);
+customers.patch(
+  '/:customer_id',
+  authMiddleware,
+  customerController.editCustomer,
+);
 
 // Users routes
 const userOpts: Router.IRouterOptions = {
@@ -36,10 +46,10 @@ const userOpts: Router.IRouterOptions = {
 
 const users: Router = new Router(userOpts);
 
-users.get('/', userController.getAllUsers);
-users.get('/:user_id', userController.getUser);
-users.delete('/:user_id', userController.deleteUser);
-users.patch('/:user_id', userController.editUser);
+users.get('/', authMiddleware, userController.getAllUsers);
+users.get('/:user_id', authMiddleware, userController.getUser);
+users.delete('/:user_id', authMiddleware, userController.deleteUser);
+users.patch('/:user_id', authMiddleware, userController.editUser);
 
 // Combine routers
 const router: Router = new Router();
