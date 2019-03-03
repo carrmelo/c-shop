@@ -9,7 +9,7 @@ import {
   ACCEPTED,
   getStatusText,
 } from 'http-status-codes';
-import customerEntity from './customer.entity';
+import customerEntity from '../customer/customer.entity';
 
 const routerOpts: Router.IRouterOptions = {
   prefix: '/customers',
@@ -26,7 +26,7 @@ router.get('/', async (ctx: Koa.Context) => {
   const customers = await customerRepo.find();
 
   ctx.status = OK;
-  ctx.body = { data: { customers, user: ctx.state.user } };
+  ctx.body = { data: { customers } };
 });
 
 router.get('/:customer_id', async (ctx: Koa.Context) => {

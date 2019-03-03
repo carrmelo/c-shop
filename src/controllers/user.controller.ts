@@ -3,7 +3,7 @@ import * as Router from 'koa-router';
 import { getRepository, Repository } from 'typeorm';
 import { OK, NOT_FOUND, NO_CONTENT, ACCEPTED } from 'http-status-codes';
 import { hash } from 'bcryptjs';
-import userEntity from './user.entity';
+import userEntity from '../user/user.entity';
 
 const routerOpts: Router.IRouterOptions = {
   prefix: '/users',
