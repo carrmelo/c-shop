@@ -7,7 +7,7 @@ import {
   NO_CONTENT,
   ACCEPTED,
 } from 'http-status-codes';
-import customerEntity from '../customer/customer.entity';
+import customerEntity from '../models/customer.entity';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(

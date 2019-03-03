@@ -3,7 +3,7 @@ import { getRepository, Repository } from 'typeorm';
 import { OK, NOT_FOUND, CREATED } from 'http-status-codes';
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import userEntity from '../user/user.entity';
+import userEntity from '../models/user.entity';
 
 export const signUp = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);

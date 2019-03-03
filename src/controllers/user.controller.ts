@@ -7,7 +7,7 @@ import {
   ACCEPTED,
   FORBIDDEN,
 } from 'http-status-codes';
-import userEntity from '../user/user.entity';
+import userEntity from '../models/user.entity';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
