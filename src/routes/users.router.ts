@@ -1,6 +1,6 @@
 import * as Router from 'koa-router';
-import authMiddleware from '../middlewares/auth.middleware';
-import adminMiddleware from '../middlewares/admin.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
+import { adminMiddleware } from '../middlewares/admin.middleware';
 import { userController } from '../controllers';
 
 const userOpts: Router.IRouterOptions = {

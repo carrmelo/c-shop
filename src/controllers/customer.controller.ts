@@ -17,7 +17,7 @@ export const getAllCustomers = async (ctx: Koa.Context) => {
   const customers = await customerRepo.find();
 
   ctx.status = OK;
-  ctx.body = { data: { customers, ctx: ctx.state } };
+  ctx.body = { data: { customers } };
 };
 
 export const getCustomer = async (ctx: Koa.Context) => {

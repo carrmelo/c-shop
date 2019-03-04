@@ -4,7 +4,6 @@ import { sign } from './auth.router';
 import { customers } from './customers.router';
 import { users } from './users.router';
 
-// Combine routers
 const router: Router = new Router();
 
 router.use(sign.routes());

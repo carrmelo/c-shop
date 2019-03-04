@@ -56,7 +56,7 @@ export const editUser = async (ctx: Koa.Context) => {
     ctx.throw(NOT_FOUND);
   }
 
-  const updatedUser = await userRepo.merge(user, ctx.rquest.body);
+  const updatedUser = await userRepo.merge(user, ctx.request.body);
   userRepo.save(updatedUser);
   delete updatedUser.password;
   ctx.status = ACCEPTED;
