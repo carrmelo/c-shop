@@ -2,7 +2,7 @@ import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
 import * as bodyParser from 'koa-bodyparser';
 import * as jwt from 'koa-jwt';
-import router from '../router';
+import { router } from '../routes/';
 
 // Load enviroment configuration
 require('dotenv').config();

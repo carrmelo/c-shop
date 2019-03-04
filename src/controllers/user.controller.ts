@@ -1,6 +1,12 @@
 import * as Koa from 'koa';
 import { getRepository, Repository } from 'typeorm';
-import { OK, NOT_FOUND, NO_CONTENT, ACCEPTED } from 'http-status-codes';
+import {
+  OK,
+  NOT_FOUND,
+  NO_CONTENT,
+  ACCEPTED,
+  getStatusText,
+} from 'http-status-codes';
 import userEntity from '../models/user.entity';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
@@ -19,7 +25,7 @@ export const getUser = async (ctx: Koa.Context) => {
   const user = await userRepo.findOne(ctx.params.user_id);
 
   if (!user) {
-    throw ctx.throw(NOT_FOUND);
+    ctx.throw(NOT_FOUND);
   }
 
   delete user.password;
