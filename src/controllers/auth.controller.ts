@@ -24,7 +24,7 @@ export const signUp = async (ctx: Koa.Context) => {
   const token = sign(
     {
       id: newUser.id,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
     },
     process.env.APP_SECRET,
   );
