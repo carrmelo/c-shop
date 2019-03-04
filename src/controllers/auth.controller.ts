@@ -46,7 +46,10 @@ export const signIn = async (ctx: Koa.Context) => {
   if (!valid) throw ctx.throw(NOT_FOUND);
 
   const token = sign(
-    { id: user.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 },
+    {
+      id: user.id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    },
     process.env.APP_SECRET,
   );
 
