@@ -1,7 +1,5 @@
 import { IsDefined, IsEmail, MinLength, Matches } from 'class-validator';
 
-const emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
 export class UserValidator {
   @IsDefined()
   @MinLength(3, {
@@ -11,7 +9,6 @@ export class UserValidator {
 
   @IsDefined()
   @IsEmail()
-  @Matches(emailRegex)
   email: string;
 
   @IsDefined()

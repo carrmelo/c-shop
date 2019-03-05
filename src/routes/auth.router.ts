@@ -8,7 +8,7 @@ const signOpts: Router.IRouterOptions = {
 
 const sign: Router = new Router(signOpts);
 
-sign.post('/up', regexMiddleware, authController.signUp);
+sign.post('/up', /*regexMiddleware,*/ authController.signUp);
 sign.post('/in', authController.signIn);
 
 export { sign };

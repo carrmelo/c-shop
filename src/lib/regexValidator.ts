@@ -6,15 +6,12 @@ export const passwordValidator = (password: string) => {
   return passwordRegex.test(password);
 };
 
-export const bodyValidator = (user: UserValidator) => {
-  validate(user).then(errors => {
+export const anyFieldIsEmpty = (user: UserValidator) => {
+  return validate(user).then(errors => {
+    console.log('----', errors);
+
     return errors.length > 0 ? true : false;
   });
-};
-
-export const emptyValidator = (field: string) => {
-  const emptyRegex = /^\s*$/;
-  return emptyRegex.test(field);
 };
 
 export const emailValidator = (email: string) => {
