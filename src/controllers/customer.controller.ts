@@ -6,8 +6,11 @@ import {
   CREATED,
   NO_CONTENT,
   ACCEPTED,
+  CONFLICT,
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
+import { CustomerValidator } from '../models/customer.validator';
+import { anyFieldIsWrong } from '../lib/regexValidator';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
@@ -41,6 +44,15 @@ export const createCustomer = async (ctx: Koa.Context) => {
   );
 
   const { name, surname, pictureUrl } = ctx.request.body;
+
+  const customerValidator = new CustomerValidator();
+  customerValidator.name = name;
+  customerValidator.surname = surname;
+
+  if (await anyFieldIsWrong(customerValidator)) {
+    ctx.throw(CONFLICT, 'Please check your user fields');
+  }
+
   const createdBy = ctx.state.user.id;
 
   const customer: customerEntity = customerRepo.create({
@@ -82,9 +94,10 @@ export const editCustomer = async (ctx: Koa.Context) => {
     ctx.throw(NOT_FOUND);
   }
 
-  ctx.request.body.modifiedBy = ctx.state.user.id;
+  const { body } = ctx.request;
+  body.modifiedBy = ctx.state.user.id;
 
-  const updatedCustomer = await customerRepo.merge(customer, ctx.request.body);
+  const updatedCustomer = await customerRepo.merge(customer, body);
   customerRepo.save(updatedCustomer);
 
   ctx.status = ACCEPTED;

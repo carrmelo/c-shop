@@ -1,6 +1,6 @@
 import { IsDefined, IsEmail, MinLength } from 'class-validator';
 
-export class UserValidator {
+export class CustomerValidator {
   @IsDefined()
   @MinLength(3, {
     message: 'Name is too short',
@@ -8,12 +8,8 @@ export class UserValidator {
   name: string;
 
   @IsDefined()
-  @IsEmail()
-  email: string;
-
-  @IsDefined()
-  @MinLength(8, {
-    message: 'Password is too short',
+  @MinLength(3, {
+    message: 'Name is too short',
   })
-  password: string;
+  surname: string;
 }
