@@ -1,10 +1,10 @@
 # C-SHOP
 
-Simple REST API (KOA && TypeScript && PosgreSQL) to admin customers and users.
+Simple RESTful API (KOA && TypeScript && PosgreSQL) to admin customers and users.
 
 To install all dependencies clone the repository and run `npm i` or `yarn install`
 
-To install PostgreSQL via HomeBrew you can follow [these instrucions](https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3). Run the CLI with the `psql` command, and `CREATE DATABASE cshop`, and you should be ready to go.
+To install PostgreSQL via HomeBrew you can follow [these instructions](https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3). Run the CLI with the `psql` command, and `CREATE DATABASE cshop`, and you should be ready to go.
 
 ## Routes:
 

@@ -2,7 +2,8 @@ import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
 import * as bodyParser from 'koa-bodyparser';
 import * as jwt from 'koa-jwt';
-import { router } from '../routes/';
+import router from '../routes';
+import errorHandlerMiddleware from '../middlewares/errorHandler.middleware';
 
 // Load enviroment configuration
 require('dotenv').config();
@@ -13,17 +14,7 @@ app
   .use(bodyParser())
 
   // Initial generic error handling middleware.
-  .use(async (ctx: Koa.Context, next: () => Promise<any>) => {
-    try {
-      await next();
-    } catch (error) {
-      ctx.status =
-        error.statusCode || error.status || HttpStatus.INTERNAL_SERVER_ERROR;
-      error.status = ctx.status;
-      ctx.body = { error };
-      ctx.app.emit('error', error, ctx);
-    }
-  })
+  .use(errorHandlerMiddleware)
 
   // Routes middleware
   .use(jwt({ secret: process.env.APP_SECRET, passthrough: true }))

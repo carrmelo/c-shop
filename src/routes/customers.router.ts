@@ -8,18 +8,11 @@ const customersOpts: Router.IRouterOptions = {
 
 const customers: Router = new Router(customersOpts);
 
-customers.get('/', authMiddleware, customerController.getAllCustomers);
-customers.get('/:customer_id', authMiddleware, customerController.getCustomer);
-customers.post('/', authMiddleware, customerController.createCustomer);
-customers.delete(
-  '/:customer_id',
-  authMiddleware,
-  customerController.deleteCustomer,
-);
-customers.patch(
-  '/:customer_id',
-  authMiddleware,
-  customerController.editCustomer,
-);
+customers
+  .get('/', authMiddleware, customerController.getAllCustomers)
+  .get('/:customer_id', authMiddleware, customerController.getCustomer)
+  .post('/', authMiddleware, customerController.createCustomer)
+  .delete('/:customer_id', authMiddleware, customerController.deleteCustomer)
+  .patch('/:customer_id', authMiddleware, customerController.editCustomer);
 
 export { customers };

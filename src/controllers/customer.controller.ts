@@ -6,7 +6,7 @@ import {
   CREATED,
   NO_CONTENT,
   ACCEPTED,
-  CONFLICT,
+  BAD_REQUEST,
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
 import { CustomerValidator } from '../models/customer.validator';
@@ -50,7 +50,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
   customerValidator.surname = surname;
 
   if (await anyFieldIsWrong(customerValidator)) {
-    ctx.throw(CONFLICT, 'Please check your user fields');
+    ctx.throw(BAD_REQUEST, 'Please check your user fields');
   }
 
   const createdBy = ctx.state.user.id;
@@ -98,7 +98,7 @@ export const editCustomer = async (ctx: Koa.Context) => {
   body.modifiedBy = ctx.state.user.id;
 
   const updatedCustomer = await customerRepo.merge(customer, body);
-  customerRepo.save(updatedCustomer);
+  await customerRepo.save(updatedCustomer);
 
   ctx.status = ACCEPTED;
   ctx.body = { data: { customer: updatedCustomer } };

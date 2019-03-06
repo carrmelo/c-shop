@@ -1,22 +1,19 @@
 import * as Koa from 'koa';
 import { getRepository, Repository } from 'typeorm';
-import {
-  OK,
-  NOT_FOUND,
-  NO_CONTENT,
-  ACCEPTED,
-  getStatusText,
-} from 'http-status-codes';
+import { OK, NOT_FOUND, NO_CONTENT, ACCEPTED } from 'http-status-codes';
 import userEntity from '../models/user.entity';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const users = await userRepo.find();
-  users.map(user => delete user.password);
+  const data = users.map(user => {
+    const { password, ...filteredProps } = user;
+    return filteredProps;
+  });
 
   ctx.status = OK;
-  ctx.body = { data: { users } };
+  ctx.body = { data };
 };
 
 export const getUser = async (ctx: Koa.Context) => {

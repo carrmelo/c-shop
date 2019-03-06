@@ -6,8 +6,9 @@ import { users } from './users.router';
 
 const router: Router = new Router();
 
-router.use(sign.routes());
-router.use(customers.routes());
-router.use(users.routes());
+router
+  .use(sign.routes())
+  .use(customers.routes())
+  .use(users.routes());
 
-export { router };
+export default router;

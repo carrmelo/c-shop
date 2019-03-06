@@ -7,7 +7,7 @@ export const passwordValidator = (password: string) => {
   return passwordRegex.test(password);
 };
 
-export const anyFieldIsEmpty = (
+export const anyFieldIsWrong = (
   entity: UserValidator | CustomerValidator,
 ): Promise<boolean> => {
   return validate(entity).then(errors => {

@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsDefined } from 'class-validator';
 
 @Entity()
 export default class User {
@@ -10,7 +9,6 @@ export default class User {
   name: string;
 
   @Column({ unique: true })
-  @IsDefined()
   email: string;
 
   @Column()

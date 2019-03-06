@@ -10,20 +10,21 @@ const userOpts: Router.IRouterOptions = {
 
 const users: Router = new Router(userOpts);
 
-users.get('/', authMiddleware, adminMiddleware, userController.getAllUsers);
-users.get('/:user_id', authMiddleware, adminMiddleware, userController.getUser);
-users.delete(
-  '/:user_id',
-  authMiddleware,
-  adminMiddleware,
-  userController.deleteUser,
-);
-users.patch(
-  '/:user_id',
-  authMiddleware,
-  adminMiddleware,
-  regexMiddleware,
-  userController.editUser,
-);
+users
+  .get('/', authMiddleware, adminMiddleware, userController.getAllUsers)
+  .get('/:user_id', authMiddleware, adminMiddleware, userController.getUser)
+  .delete(
+    '/:user_id',
+    authMiddleware,
+    adminMiddleware,
+    userController.deleteUser,
+  )
+  .patch(
+    '/:user_id',
+    authMiddleware,
+    adminMiddleware,
+    regexMiddleware,
+    userController.editUser,
+  );
 
 export { users };

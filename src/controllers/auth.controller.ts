@@ -1,10 +1,10 @@
 import * as Koa from 'koa';
 import { getRepository, Repository } from 'typeorm';
-import { OK, NOT_FOUND, CREATED, CONFLICT } from 'http-status-codes';
+import { OK, NOT_FOUND, CREATED, BAD_REQUEST } from 'http-status-codes';
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
-import { anyFieldIsEmpty } from '../lib/regexValidator';
+import { anyFieldIsWrong } from '../lib/regexValidator';
 import { UserValidator } from '../models/user.validator';
 
 export const signUp = async (ctx: Koa.Context) => {
@@ -17,17 +17,17 @@ export const signUp = async (ctx: Koa.Context) => {
   userValidator.email = email;
   userValidator.password = password;
 
-  if (await anyFieldIsEmpty(userValidator)) {
-    ctx.throw(CONFLICT, 'Please check your user fields');
+  if (await anyFieldIsWrong(userValidator)) {
+    ctx.throw(BAD_REQUEST, 'Please check your user fields');
   }
 
   const hashPassword = await hash(password, 10);
 
   const user: userEntity = userRepo.create({
     name,
+    isAdmin,
     email: email.toLowerCase(),
     password: hashPassword,
-    isAdmin: isAdmin ? true : false,
   });
   const newUser = await userRepo.save(user);
 
