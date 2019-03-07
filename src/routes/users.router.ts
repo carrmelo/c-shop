@@ -13,6 +13,7 @@ const users: Router = new Router(userOpts);
 users
   .get('/', authMiddleware, adminMiddleware, userController.getAllUsers)
   .get('/:user_id', authMiddleware, adminMiddleware, userController.getUser)
+  .post('/', authMiddleware, adminMiddleware, userController.createUser)
   .delete(
     '/:user_id',
     authMiddleware,

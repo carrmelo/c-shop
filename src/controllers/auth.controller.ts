@@ -1,10 +1,10 @@
 import * as Koa from 'koa';
-import { getRepository, Repository } from 'typeorm';
+import { Repository, getRepository } from 'typeorm';
 import { OK, NOT_FOUND, CREATED, BAD_REQUEST } from 'http-status-codes';
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
-import { anyFieldIsWrong } from '../lib/regexValidator';
+import anyFieldIsWrong from '../lib/entityValidator';
 import { UserValidator } from '../models/user.validator';
 
 export const signUp = async (ctx: Koa.Context) => {
@@ -12,37 +12,34 @@ export const signUp = async (ctx: Koa.Context) => {
 
   const { name, email, password, isAdmin } = ctx.request.body;
 
-  const userValidator = new UserValidator();
-  userValidator.name = name;
-  userValidator.email = email;
-  userValidator.password = password;
+  let user: userEntity = userRepo.create({
+    name,
+    email,
+    password,
+    isAdmin,
+  });
 
-  if (await anyFieldIsWrong(userValidator)) {
+  if (await anyFieldIsWrong(user)) {
     ctx.throw(BAD_REQUEST, 'Please check your user fields');
   }
 
-  const hashPassword = await hash(password, 10);
+  user.password = await hash(password, 10);
+  user.email = email.toLowerCase();
 
-  const user: userEntity = userRepo.create({
-    name,
-    isAdmin,
-    email: email.toLowerCase(),
-    password: hashPassword,
-  });
-  const newUser = await userRepo.save(user);
+  user = await userRepo.save(user);
 
   // Token expiration set to 1 Hour
   const token = sign(
     {
-      id: newUser.id,
+      id: user.id,
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
     },
     process.env.APP_SECRET,
   );
 
-  delete newUser.password;
+  delete user.password;
   ctx.status = CREATED;
-  ctx.body = { token, data: newUser };
+  ctx.body = { token, data: user };
 };
 
 export const signIn = async (ctx: Koa.Context) => {

@@ -10,7 +10,7 @@ import {
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
 import { CustomerValidator } from '../models/customer.validator';
-import { anyFieldIsWrong } from '../lib/regexValidator';
+import anyFieldIsWrong from '../lib/entityValidator';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
@@ -50,7 +50,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
   customerValidator.surname = surname;
 
   if (await anyFieldIsWrong(customerValidator)) {
-    ctx.throw(BAD_REQUEST, 'Please check your user fields');
+    ctx.throw(BAD_REQUEST, 'Please check your customer fields');
   }
 
   const createdBy = ctx.state.user.id;
