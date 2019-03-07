@@ -17,9 +17,6 @@ export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const users = await userRepo.find({ relations: ['created', 'modified'] });
-  users.forEach(user => {
-    delete user.password;
-  });
 
   ctx.status = OK;
   ctx.body = { data: users };
@@ -70,7 +67,6 @@ export const createUser = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
-  delete user.password;
   ctx.status = CREATED;
   ctx.body = { token, data: user };
 };
@@ -110,7 +106,6 @@ export const editUser = async (ctx: Koa.Context) => {
   if (body.email) user.email.toLowerCase();
 
   userRepo.save(user);
-  delete user.password;
   ctx.status = ACCEPTED;
   ctx.body = { data: { user } };
 };

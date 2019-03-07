@@ -37,7 +37,6 @@ export const signUp = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
-  delete user.password;
   ctx.status = CREATED;
   ctx.body = { token, data: user };
 };
@@ -61,7 +60,6 @@ export const signIn = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
-  delete user.password;
   ctx.status = OK;
   ctx.body = { token, data: { user } };
 };

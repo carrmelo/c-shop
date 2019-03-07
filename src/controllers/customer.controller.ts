@@ -60,7 +60,6 @@ export const createCustomer = async (ctx: Koa.Context) => {
     ctx.throw(BAD_REQUEST, 'Please check your customer fields');
   }
 
-  delete customer.createdBy.password;
   customer = await customerRepo.save(customer);
 
   ctx.status = CREATED;
@@ -102,7 +101,6 @@ export const editCustomer = async (ctx: Koa.Context) => {
   if (await anyFieldIsWrong(customer)) {
     ctx.throw(BAD_REQUEST, 'Please check your customer fields');
   }
-  delete customer.modifiedBy.password;
 
   await customerRepo.save(customer);
 
