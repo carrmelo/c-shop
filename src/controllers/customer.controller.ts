@@ -9,7 +9,6 @@ import {
   BAD_REQUEST,
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
-import { CustomerValidator } from '../models/customer.validator';
 import anyFieldIsWrong from '../lib/entityValidator';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
@@ -44,27 +43,23 @@ export const createCustomer = async (ctx: Koa.Context) => {
   );
 
   const { name, surname, pictureUrl } = ctx.request.body;
-
-  const customerValidator = new CustomerValidator();
-  customerValidator.name = name;
-  customerValidator.surname = surname;
-
-  if (await anyFieldIsWrong(customerValidator)) {
-    ctx.throw(BAD_REQUEST, 'Please check your customer fields');
-  }
-
   const createdBy = ctx.state.user.id;
 
-  const customer: customerEntity = customerRepo.create({
+  let customer: customerEntity = customerRepo.create({
     name,
     surname,
     pictureUrl,
     createdBy,
   });
-  const newCustomer = await customerRepo.save(customer);
+
+  if (await anyFieldIsWrong(customer)) {
+    ctx.throw(BAD_REQUEST, 'Please check your customer fields');
+  }
+
+  customer = await customerRepo.save(customer);
 
   ctx.status = CREATED;
-  ctx.body = { data: newCustomer };
+  ctx.body = { data: customer };
 };
 
 export const deleteCustomer = async (ctx: Koa.Context) => {

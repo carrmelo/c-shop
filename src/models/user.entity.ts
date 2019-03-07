@@ -1,11 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import {
-  IsDefined,
-  IsEmail,
-  MinLength,
-  Matches,
-  IsBoolean,
-} from 'class-validator';
+import { IsDefined, IsEmail, MinLength, Matches } from 'class-validator';
 
 const passwordMessage = `Password must contain a minimum of eight characters,
 at least one uppercase letter, one lowercase letter and one number`;
