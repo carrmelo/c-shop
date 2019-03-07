@@ -23,6 +23,7 @@
     "koa-bodyparser": "^4.2.1",
     "koa-jwt": "^3.5.1",
     "koa-router": "^7.4.0",
+    "lodash": "^4.17.11",
     "pg": "^7.8.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.14"

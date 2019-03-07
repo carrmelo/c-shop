@@ -1,15 +1,10 @@
 import * as Router from 'koa-router';
 import { authController } from '../controllers';
-import { regexMiddleware } from '../middlewares/regex.middleware';
 
-const signOpts: Router.IRouterOptions = {
-  prefix: '/sign',
-};
-
-const sign: Router = new Router(signOpts);
+const sign: Router = new Router();
 
 sign
-  .post('/up', /*regexMiddleware,*/ authController.signUp)
-  .post('/in', authController.signIn);
+  .post('/signup', authController.signUp)
+  .post('/signin', authController.signIn);
 
 export { sign };
