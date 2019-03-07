@@ -1,9 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { IsDefined, IsEmail, MinLength, Matches } from 'class-validator';
+import Customer from './customer.entity';
 
-const passwordMessage = `Password must contain a minimum of eight characters,
-at least one uppercase letter, one lowercase letter and one number`;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+const passwordMessage = `Password must contain a minimum of eight characters, at least
+one uppercase letter, one lowercase letter, one number and one special character @$!%*?/.&`;
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?/.&])[A-Za-z\d@$!%/.*?&]{8,}$/;
 
 @Entity()
 export default class User {
@@ -32,4 +34,10 @@ export default class User {
 
   @Column({ default: false })
   isAdmin: boolean;
+
+  @OneToMany(type => Customer, customer => customer.createdBy)
+  created: Customer[];
+
+  @OneToMany(type => Customer, customer => customer.modifiedBy)
+  modified: Customer[];
 }

@@ -1,6 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  ManyToOne,
+} from 'typeorm';
 import { IsDefined, MinLength } from 'class-validator';
-
+import User from './user.entity';
 @Entity()
 export default class Customer {
   @PrimaryGeneratedColumn('uuid')
@@ -22,10 +28,10 @@ export default class Customer {
 
   @Column()
   pictureUrl: string;
-  // Relations for created and modified
-  @Column({ readonly: true })
-  createdBy: string;
 
-  @Column({ nullable: true })
-  modifiedBy: string;
+  @ManyToOne(type => User, user => user.created)
+  createdBy: User;
+
+  @ManyToOne(type => User, user => user.modified)
+  modifiedBy: User;
 }

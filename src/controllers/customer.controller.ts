@@ -9,6 +9,7 @@ import {
   BAD_REQUEST,
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
+import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
@@ -41,9 +42,10 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
+  const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const { name, surname, pictureUrl } = ctx.request.body;
-  const createdBy = ctx.state.user.id;
+  const createdBy = await userRepo.findOne(ctx.state.user.id);
 
   let customer: customerEntity = customerRepo.create({
     name,
@@ -57,6 +59,11 @@ export const createCustomer = async (ctx: Koa.Context) => {
   }
 
   customer = await customerRepo.save(customer);
+  console.log('fdddddddd', customer);
+  const userrrrr = await userRepo.find({ relations: ['created'] });
+  const userrrrr2 = await userRepo.findOne(ctx.state.user.id, {
+    relations: ['created', 'modified'],
+  });
 
   ctx.status = CREATED;
   ctx.body = { data: customer };
@@ -83,7 +90,7 @@ export const editCustomer = async (ctx: Koa.Context) => {
     customerEntity,
   );
 
-  const customer = await customerRepo.findOne(ctx.params.customer_id);
+  let customer = await customerRepo.findOne(ctx.params.customer_id);
 
   if (!customer) {
     ctx.throw(NOT_FOUND);
@@ -92,9 +99,14 @@ export const editCustomer = async (ctx: Koa.Context) => {
   const { body } = ctx.request;
   body.modifiedBy = ctx.state.user.id;
 
-  const updatedCustomer = await customerRepo.merge(customer, body);
-  await customerRepo.save(updatedCustomer);
+  customer = await customerRepo.merge(customer, body);
+
+  if (await anyFieldIsWrong(customer)) {
+    ctx.throw(BAD_REQUEST, 'Please check your customer fields');
+  }
+
+  await customerRepo.save(customer);
 
   ctx.status = ACCEPTED;
-  ctx.body = { data: { customer: updatedCustomer } };
+  ctx.body = { data: { customer } };
 };

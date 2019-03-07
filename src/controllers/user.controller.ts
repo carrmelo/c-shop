@@ -16,21 +16,21 @@ import anyFieldIsWrong from '../lib/entityValidator';
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const users = await userRepo.find();
-  const data = users.map(user => {
-    const { password, ...filteredProps } = user;
-    return filteredProps;
+  const users = await userRepo.find({ relations: ['created', 'modified'] });
+  users.forEach(user => {
+    delete user.password;
   });
 
   ctx.status = OK;
-  ctx.body = { data };
+  ctx.body = { data: users };
 };
 
 export const getUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const user = await userRepo.findOne(ctx.params.user_id);
-
+  const user = await userRepo.findOne(ctx.params.user_id, {
+    relations: ['created', 'modified'],
+  });
   if (!user) {
     ctx.throw(NOT_FOUND);
   }
@@ -92,15 +92,25 @@ export const deleteUser = async (ctx: Koa.Context) => {
 export const editUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const user = await userRepo.findOne(ctx.params.user_id);
+  const { body } = ctx.request;
+
+  let user = await userRepo.findOne(ctx.params.user_id);
 
   if (!user) {
     ctx.throw(NOT_FOUND);
   }
 
-  const updatedUser = await userRepo.merge(user, ctx.request.body);
-  userRepo.save(updatedUser);
-  delete updatedUser.password;
+  user = await userRepo.merge(user, body);
+
+  if (await anyFieldIsWrong(user)) {
+    ctx.throw(BAD_REQUEST, 'Please check your customer fields');
+  }
+
+  if (body.password) user.password = await hash(body.password, 10);
+  if (body.email) user.email.toLowerCase();
+
+  userRepo.save(user);
+  delete user.password;
   ctx.status = ACCEPTED;
-  ctx.body = { data: { user: updatedUser } };
+  ctx.body = { data: { user } };
 };
