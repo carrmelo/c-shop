@@ -24,7 +24,7 @@ export default class User {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @IsDefined()
   @MinLength(8, {
     message: 'Password is too short',
