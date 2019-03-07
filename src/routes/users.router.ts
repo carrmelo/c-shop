@@ -23,7 +23,7 @@ users
     '/:user_id',
     authMiddleware,
     adminMiddleware,
-    regexMiddleware,
+    // regexMiddleware,
     userController.editUser,
   );
 
