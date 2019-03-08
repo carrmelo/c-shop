@@ -10,6 +10,7 @@ import {
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
+import uploadFile from '../service/upload.service';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
@@ -45,6 +46,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
+  console.log(ctx);
 
   const { name, surname, pictureUrl } = ctx.request.body;
   const createdBy = ctx.state.user.id;
@@ -106,4 +108,14 @@ export const editCustomer = async (ctx: Koa.Context) => {
 
   ctx.status = ACCEPTED;
   ctx.body = { data: { customer } };
+};
+
+export const uploadPicture = async (ctx: Koa.Context) => {
+  const { file } = ctx.request.files;
+  const { key, url } = await uploadFile({
+    fileName: file.name,
+    filePath: file.path,
+    fileType: file.type,
+  });
+  ctx.body = { key, url };
 };
