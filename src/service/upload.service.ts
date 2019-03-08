@@ -1,29 +1,36 @@
 import * as aws from 'aws-sdk';
-import * as multerS3 from 'multer-s3';
-import * as multer from 'koa-multer';
+import * as fs from 'fs';
 
-// aws.config.update({
-//   secretAccessKey: process.env.IAMAWSSecretKey,
-//   accessKeyId: process.env.IAMAWSAccessKeyId,
-//   region: process.env.IAMAWSRegion,
-// });
+export const uploadFile = async ({ fileName, filePath, fileType }) => {
+  return new Promise((resolve, reject) => {
+    aws.config.update({
+      secretAccessKey: process.env.IAMAWSSecretKey,
+      accessKeyId: process.env.IAMAWSAccessKeyId,
+      region: process.env.IAMAWSRegion,
+    });
 
-export const bucket = new aws.S3(/*{ apiVersion: '2019-03-08' }*/)
-  .createBucket({
-    Bucket: process.env.IAMAWSBucket,
-  })
-  .promise();
+    const s3 = new aws.S3({
+      apiVersion: '2006-03-01',
+    });
 
-// export const upload = multer({
-//   storage: multerS3({
-//     s3,
-//     bucket: 'theam-cshop',
-//     acl: 'public-read',
-//     metadata(req, file, cb) {
-//       cb(null, { fieldName: file.fieldname });
-//     },
-//     key(req, file, cb) {
-//       cb(null, Date.now().toString());
-//     },
-//   }),
-// });
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', err => reject(err));
+
+    s3.upload(
+      {
+        ACL: 'public-read',
+        Bucket: process.env.IAMAWSBucket,
+        Body: stream,
+        Key: fileName,
+        ContentType: fileType,
+      },
+      (err: any, data: any): any => {
+        if (err) {
+          reject(err);
+        } else if (data) {
+          resolve({ key: data.Key, url: data.Location });
+        }
+      },
+    );
+  });
+};

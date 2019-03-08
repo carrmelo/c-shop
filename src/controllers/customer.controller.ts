@@ -10,7 +10,7 @@ import {
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
-import uploadFile from '../service/upload.service';
+import { uploadFile } from '../service/upload.service';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
