@@ -29,9 +29,8 @@ export default class Customer {
   @Column({ nullable: true })
   pictureUrl: string;
 
-  // TODO
-  // @Column({ nullable: true })
-  // pictureKey: string
+  @Column({ nullable: true })
+  pictureKey: string;
 
   @ManyToOne(type => User, user => user.created)
   createdBy: User;

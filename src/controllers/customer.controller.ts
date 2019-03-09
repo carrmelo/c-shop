@@ -49,14 +49,14 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
-  const { file } = ctx.request.files;
+  const { picture } = ctx.request.files;
   const { name, surname } = ctx.request.body;
   const createdBy = ctx.state.user.id;
 
-  const { /*key,*/ url } = await uploadFile({
-    fileName: file.name,
-    filePath: file.path,
-    fileType: file.type,
+  const { key, url } = await uploadFile({
+    fileName: picture.name,
+    filePath: picture.path,
+    fileType: picture.type,
   });
 
   let customer: customerEntity = customerRepo.create({
@@ -64,7 +64,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
     surname,
     createdBy,
     pictureUrl: url,
-    // pictureKey: key
+    pictureKey: key,
   });
 
   if (await anyFieldIsWrong(customer)) {
@@ -117,18 +117,4 @@ export const editCustomer = async (ctx: Koa.Context) => {
 
   ctx.status = ACCEPTED;
   ctx.body = { data: { customer } };
-};
-
-export const uploadPicture = async (ctx: Koa.Context) => {
-  console.log('sjfklsfk', ctx.request.files);
-  console.log('sjfklsfk', ctx.request.body);
-  const { file } = ctx.request.files;
-  // await awsController.uploadFile(file);
-
-  const { key, url } = await uploadFile({
-    fileName: file.name,
-    filePath: file.path,
-    fileType: file.type,
-  });
-  ctx.body = { key, url };
 };
