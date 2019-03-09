@@ -11,6 +11,9 @@ import {
 import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { uploadFile } from '../service/upload.service';
+import S3Controller from '../service/s3.service';
+
+const awsController = new S3Controller();
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
@@ -46,16 +49,22 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
-  console.log(ctx);
-
-  const { name, surname, pictureUrl } = ctx.request.body;
+  const { file } = ctx.request.files;
+  const { name, surname } = ctx.request.body;
   const createdBy = ctx.state.user.id;
+
+  const { /*key,*/ url } = await uploadFile({
+    fileName: file.name,
+    filePath: file.path,
+    fileType: file.type,
+  });
 
   let customer: customerEntity = customerRepo.create({
     name,
     surname,
-    pictureUrl,
     createdBy,
+    pictureUrl: url,
+    // pictureKey: key
   });
 
   if (await anyFieldIsWrong(customer)) {
@@ -111,7 +120,11 @@ export const editCustomer = async (ctx: Koa.Context) => {
 };
 
 export const uploadPicture = async (ctx: Koa.Context) => {
+  console.log('sjfklsfk', ctx.request.files);
+  console.log('sjfklsfk', ctx.request.body);
   const { file } = ctx.request.files;
+  // await awsController.uploadFile(file);
+
   const { key, url } = await uploadFile({
     fileName: file.name,
     filePath: file.path,
