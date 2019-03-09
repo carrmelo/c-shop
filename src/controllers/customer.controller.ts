@@ -52,19 +52,22 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const { picture } = ctx.request.files;
   const { name, surname } = ctx.request.body;
   const createdBy = ctx.state.user.id;
+  let key = null;
+  let url = null;
 
-  const { key, url } = await uploadFile({
+  if (picture) {
+    { key, url } = await uploadFile({
     fileName: picture.name,
     filePath: picture.path,
     fileType: picture.type,
   });
-
+  }
   let customer: customerEntity = customerRepo.create({
     name,
     surname,
     createdBy,
-    pictureUrl: url,
-    pictureKey: key,
+    pictureUrl: picture ? url : null,
+    pictureKey: picture ? key : null,
   });
 
   if (await anyFieldIsWrong(customer)) {
