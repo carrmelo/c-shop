@@ -35,6 +35,9 @@ export default class User {
   @Column({ default: false })
   isAdmin: boolean;
 
+  @Column({ readonly: true, default: false })
+  superUser: boolean;
+
   @OneToMany(type => Customer, customer => customer.createdBy)
   created: Customer[];
 

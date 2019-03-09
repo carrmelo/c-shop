@@ -32,7 +32,7 @@ export const getUser = async (ctx: Koa.Context) => {
     ctx.throw(NOT_FOUND);
   }
 
-  delete user.password;
+  // delete user.password;
   ctx.status = OK;
   ctx.body = { data: { user } };
 };
@@ -67,6 +67,7 @@ export const createUser = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
+  delete user.password;
   ctx.status = CREATED;
   ctx.body = { token, data: user };
 };

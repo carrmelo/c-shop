@@ -12,19 +12,9 @@ interface FileResolved {
   url: string;
 }
 
-// const creds = new aws.Credentials({
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-// });
-
-// const myConfig = new aws.Config({
-//   credentials: creds,
-//   region: process.env.AWS_REGION,
-// });
-
 const s3Controller = (): any => {
   return new aws.S3({
-    // region: process.env.AWS_REGION,
+    region: process.env.AWS_REGION,
     apiVersion: '2006-03-01',
   });
 };

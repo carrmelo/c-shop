@@ -1,6 +1,12 @@
 import * as Koa from 'koa';
 import { Repository, getRepository } from 'typeorm';
-import { OK, NOT_FOUND, CREATED, BAD_REQUEST } from 'http-status-codes';
+import {
+  OK,
+  NOT_FOUND,
+  CREATED,
+  BAD_REQUEST,
+  FORBIDDEN,
+} from 'http-status-codes';
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
@@ -10,13 +16,19 @@ import anyFieldIsWrong from '../lib/entityValidator';
 export const signUp = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const { name, email, password, isAdmin } = ctx.request.body;
+  const [superUser] = await userRepo.find({ where: { superUser: true } });
+  if (superUser) {
+    throw ctx.throw(FORBIDDEN, 'A super user has already been created');
+  }
+
+  const { name, email, password } = ctx.request.body;
 
   let user: userEntity = userRepo.create({
     name,
     email,
     password,
-    isAdmin,
+    isAdmin: true,
+    superUser: true,
   });
 
   if (await anyFieldIsWrong(user)) {
@@ -37,6 +49,7 @@ export const signUp = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
+  delete user.password;
   ctx.status = CREATED;
   ctx.body = { token, data: user };
 };
