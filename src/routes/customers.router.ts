@@ -13,6 +13,11 @@ customers
   .get('/:customer_id', authMiddleware, customerController.getCustomer)
   .post('/', authMiddleware, customerController.createCustomer)
   .delete('/:customer_id', authMiddleware, customerController.deleteCustomer)
-  .patch('/:customer_id', authMiddleware, customerController.editCustomer);
+  .patch('/:customer_id', authMiddleware, customerController.editCustomer)
+  .patch(
+    '/remove-pic/:customer_id',
+    authMiddleware,
+    customerController.deletePicture,
+  );
 
 export { customers };

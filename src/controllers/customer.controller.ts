@@ -109,6 +109,19 @@ export const editCustomer = async (ctx: Koa.Context) => {
   }
 
   const { body } = ctx.request;
+  const { picture } = ctx.request.files;
+
+  if (picture) {
+    const { key, url } = await uploadFile({
+      fileName: picture.name,
+      filePath: picture.path,
+      fileType: picture.type,
+    });
+    body.pictureUrl = url;
+    body.pictureKey = key;
+    await deleteFile(customer.pictureKey);
+  }
+
   body.modifiedBy = ctx.state.user.id;
 
   customer = await customerRepo.merge(customer, body);
@@ -118,6 +131,35 @@ export const editCustomer = async (ctx: Koa.Context) => {
   }
 
   await customerRepo.save(customer);
+
+  ctx.status = ACCEPTED;
+  ctx.body = { data: { customer } };
+};
+
+export const deletePicture = async (ctx: Koa.Context) => {
+  const customerRepo: Repository<customerEntity> = getRepository(
+    customerEntity,
+  );
+
+  const { customer_id } = ctx.params;
+
+  let customer = await customerRepo.findOne(customer_id);
+
+  if (!customer || !customer.pictureKey) {
+    ctx.throw(NOT_FOUND);
+  }
+
+  if (customer.pictureKey) {
+    await deleteFile(customer.pictureKey);
+  }
+
+  await customerRepo.update(customer_id, {
+    pictureKey: null,
+    pictureUrl: null,
+    modifiedBy: ctx.state.user.id,
+  });
+
+  customer = await customerRepo.findOne(customer_id);
 
   ctx.status = ACCEPTED;
   ctx.body = { data: { customer } };
