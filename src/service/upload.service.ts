@@ -22,21 +22,23 @@ interface FileResolved {
 //   region: process.env.AWS_REGION,
 // });
 
+const s3Controller = (): any => {
+  return new aws.S3({
+    // region: process.env.AWS_REGION,
+    apiVersion: '2006-03-01',
+  });
+};
+
 export const uploadFile = async ({
   fileName,
   filePath,
   fileType,
 }: FileStructure): Promise<FileResolved> => {
   return new Promise((resolve, reject) => {
-    const s3 = new aws.S3({
-      // region: process.env.AWS_REGION,
-      apiVersion: '2006-03-01',
-    });
-
     const stream = fs.createReadStream(filePath);
     stream.on('error', err => reject(err));
 
-    s3.upload(
+    s3Controller().upload(
       {
         ACL: 'public-read',
         Bucket: process.env.AWS_BUCKET,
@@ -53,4 +55,17 @@ export const uploadFile = async ({
       },
     );
   });
+};
+
+export const deleteFile = async (key: string) => {
+  s3Controller().deleteObject(
+    { Bucket: process.env.AWS_BUCKET, Key: key },
+    (err: any, data: any) => {
+      if (err) {
+        console.log(`There was an error deleting your file: ${err.message}`);
+        return;
+      }
+      console.log('Successfully deleted file.');
+    },
+  );
 };

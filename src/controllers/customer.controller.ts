@@ -10,7 +10,7 @@ import {
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
-import { uploadFile } from '../service/upload.service';
+import { uploadFile, deleteFile } from '../service/upload.service';
 import S3Controller from '../service/s3.service';
 
 const awsController = new S3Controller();
@@ -86,6 +86,10 @@ export const deleteCustomer = async (ctx: Koa.Context) => {
 
   if (!customer) {
     ctx.throw(NOT_FOUND);
+  }
+
+  if (customer.pictureKey) {
+    await deleteFile(customer.pictureKey);
   }
 
   await customerRepo.delete(customer);
