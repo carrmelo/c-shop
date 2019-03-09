@@ -4,7 +4,6 @@ import { BAD_REQUEST } from 'http-status-codes';
 export default (ctx: Koa.Context, next: () => Promise<any>) => {
   const { picture } = ctx.request.files;
   const acceptedFormats = ['png', 'jpg'];
-  console.log(picture);
 
   if (!picture) return next();
   const [typeImage, format] = picture.type.split('/');
