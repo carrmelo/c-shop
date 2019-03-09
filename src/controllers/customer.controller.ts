@@ -11,9 +11,11 @@ import {
 import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { uploadFile, deleteFile } from '../service/upload.service';
-import S3Controller from '../service/s3.service';
 
-const awsController = new S3Controller();
+interface FileResolved {
+  key: string;
+  url: string;
+}
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
@@ -52,22 +54,23 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const { picture } = ctx.request.files;
   const { name, surname } = ctx.request.body;
   const createdBy = ctx.state.user.id;
-  let key = null;
-  let url = null;
+
+  let uploadedPicture: FileResolved = { key: null, url: null };
 
   if (picture) {
-    { key, url } = await uploadFile({
-    fileName: picture.name,
-    filePath: picture.path,
-    fileType: picture.type,
-  });
+    uploadedPicture = await uploadFile({
+      fileName: picture.name,
+      filePath: picture.path,
+      fileType: picture.type,
+    });
   }
+
   let customer: customerEntity = customerRepo.create({
     name,
     surname,
     createdBy,
-    pictureUrl: picture ? url : null,
-    pictureKey: picture ? key : null,
+    pictureUrl: uploadedPicture.url,
+    pictureKey: uploadedPicture.key,
   });
 
   if (await anyFieldIsWrong(customer)) {
