@@ -68,6 +68,7 @@ export const createUser = async (ctx: Koa.Context) => {
   );
 
   delete user.password;
+  delete user.superUser;
   ctx.status = CREATED;
   ctx.body = { token, data: user };
 };
