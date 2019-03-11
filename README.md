@@ -71,35 +71,35 @@ These are protected routes, only users can access them.
 
 ####List All Customers
 
-| GET                | http://yourroute/customers                                                         |
-| :----------------- | ---------------------------------------------------------------------------------- |
-| Request Headers    | Authorization Bearer Token                                                         |
-| Parameters         | Customer_id: uuid                                                                  |
-| Responses          |                                                                                    |
-| 200 - Ok           | Data: Customers [ ]<br />`{id, name, surname, pictureUrl, createdBy, modifiedBy }` |
-| 401 - Unauthorized | Only Authenticated users can list customers.                                       |
+| GET                | http://yourroute/customers                                                                     |
+| :----------------- | ---------------------------------------------------------------------------------------------- |
+| Request Headers    | Authorization Bearer Token                                                                     |
+| Parameters         | Customer_id: uuid                                                                              |
+| Responses          |                                                                                                |
+| 200 - Ok           | Data: Customers [ ]<br />`{id, name, surname, pictureKey, pictureUrl, createdBy, modifiedBy }` |
+| 401 - Unauthorized | Only Authenticated users can list customers.                                                   |
 
 #### List One Customers
 
-| GET                | http://yourroute/customers/:customer_id                                        |
-| :----------------- | ------------------------------------------------------------------------------ |
-| Request Headers    | Authorization Bearer Token                                                     |
-| Parameters         | Customer_id: uuid                                                              |
-| Responses          |                                                                                |
-| 200 - Ok           | Data: Customer<br />`{ id, name, surname, pictureUrl, createdBy, modifiedBy }` |
-| 401 - Unauthorized | Only Authenticated users can list customers.                                   |
-| 404 - Not Found    | Customer is not in the Database                                                |
+| GET                | http://yourroute/customers/:customer_id                                                    |
+| :----------------- | ------------------------------------------------------------------------------------------ |
+| Request Headers    | Authorization Bearer Token                                                                 |
+| Parameters         | Customer_id: uuid                                                                          |
+| Responses          |                                                                                            |
+| 200 - Ok           | Data: Customer<br />`{ id, name, surname, pictureKey, pictureUrl, createdBy, modifiedBy }` |
+| 401 - Unauthorized | Only Authenticated users can list customers.                                               |
+| 404 - Not Found    | Customer is not in the Database                                                            |
 
 #### Create Customer
 
-| POST               | http://yourroute/customers                                                                                              |
-| :----------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Request Headers    | Authorization Bearer Token                                                                                              |
-| Body               | `{ name: string, surname: string, pictureUrl?: file }`<br/>Name: Minimum 3 characters<br/>Surname: Minimum 3 characters |
-| Responses          |                                                                                                                         |
-| 201 - Created      | Data: Customer<br />`{id, name, surname, pictureUrl, createdBy, modifiedBy }`                                           |
-| 400 - Bad Request  | One of your fields is wrong. Please check your customer fields.                                                         |
-| 401 - Unauthorized | Only Authenticated users can create customers.                                                                          |
+| POST               | http://yourroute/customers                                                                                                                                        |
+| :----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Request Headers    | Authorization Bearer Token                                                                                                                                        |
+| Body               | `{ name: string, surname: string, picture?: file }`<br/>Name: Minimum 3 characters<br/>Surname: Minimum 3 characters<br/>Picture: size: <500KB type: jpg \|\| png |
+| Responses          |                                                                                                                                                                   |
+| 201 - Created      | Data: Customer<br />`{id, name, surname, pictureKey, pictureUrl, createdBy, modifiedBy }`                                                                         |
+| 400 - Bad Request  | One of your fields is wrong. Please check your customer fields.                                                                                                   |
+| 401 - Unauthorized | Only Authenticated users can create customers.                                                                                                                    |
 
 #### Delete Customer
 
@@ -114,16 +114,16 @@ These are protected routes, only users can access them.
 
 #### Edit Customer
 
-| PATCH              | http://yourroute/customers/:customer_id                                                                                                                                                                                                                                   |
-| :----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Request Headers    | Authorization Bearer Token                                                                                                                                                                                                                                                |
-| Parameters         | Customer_id: uuid                                                                                                                                                                                                                                                         |
-| Body               | `{ name?: string, surname?: string, pictureUrl?: string }`<br />Name: minimum of 3 characters<br />Password: it must contain a minimum of eight characters, at least one uppercase letter, one lowercase letter, one number and one special character @\$!%\*?/.\& <br /> |
-| Responses          |                                                                                                                                                                                                                                                                           |
-| 202 - Accepted     | Data: Customer<br />`{id, name, surname, pictureUrl, createdBy, modifiedBy }`                                                                                                                                                                                             |
-| 400 - Bad Request  | One of your fields is wrong. Please check your customer fields.                                                                                                                                                                                                           |
-| 401 - Unauthorized | Only Authenticated users can create customers.                                                                                                                                                                                                                            |
-| 404 - Not Found    | Customer is not in the Database                                                                                                                                                                                                                                           |
+| PATCH              | http://yourroute/customers/:customer_id                                                                                                                                                                                                                                                                      |
+| :----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Request Headers    | Authorization Bearer Token                                                                                                                                                                                                                                                                                   |
+| Parameters         | Customer_id: uuid                                                                                                                                                                                                                                                                                            |
+| Body               | `{ name?: string, surname?: string, picture?: string }`<br />Name: minimum of 3 characters<br />Password: it must contain a minimum of eight characters, at least one uppercase letter, one lowercase letter, one number and one special character @\$!%\*?/.\&<br/>Picture: size: <500KB type: jpg \|\| png |
+| Responses          |                                                                                                                                                                                                                                                                                                              |
+| 202 - Accepted     | Data: Customer<br />`{id, name, surname, pictureKey, pictureUrl, createdBy, modifiedBy }`                                                                                                                                                                                                                    |
+| 400 - Bad Request  | One of your fields is wrong. Please check your customer fields.                                                                                                                                                                                                                                              |
+| 401 - Unauthorized | Only Authenticated users can create customers.                                                                                                                                                                                                                                                               |
+| 404 - Not Found    | Customer is not in the Database                                                                                                                                                                                                                                                                              |
 
 #### Remove Picture
 
