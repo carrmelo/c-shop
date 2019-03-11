@@ -8,7 +8,7 @@ export const adminMiddleware = async (
   next: () => Promise<any>,
 ) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
-  const currentUser = await userRepo.findOne(ctx.state.user.id);
+  const currentUser: userEntity = await userRepo.findOne(ctx.state.user.id);
 
   ctx.assert(currentUser.isAdmin, FORBIDDEN);
   return next();
