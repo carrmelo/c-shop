@@ -1,5 +1,5 @@
 import * as Koa from 'koa';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, getConnection } from 'typeorm';
 import {
   OK,
   NOT_FOUND,
@@ -44,7 +44,7 @@ export const createUser = async (ctx: Koa.Context) => {
 
   const { name, email, password, isAdmin }: userEntity = ctx.request.body;
 
-  let user: userEntity = userRepo.create({
+  const user: userEntity = userRepo.create({
     name,
     email,
     password,
@@ -58,7 +58,12 @@ export const createUser = async (ctx: Koa.Context) => {
   user.password = await hash(password, 10);
   user.email = email.toLowerCase();
 
-  user = await userRepo.save(user);
+  await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(userEntity)
+    .values(user)
+    .execute();
 
   // Token expiration set to 1 Hour
   const token = sign(
@@ -69,6 +74,7 @@ export const createUser = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
+  // Avoid sending sensitive information to the client
   delete user.password;
   delete user.superUser;
   ctx.status = CREATED;
@@ -76,15 +82,23 @@ export const createUser = async (ctx: Koa.Context) => {
 };
 
 export const deleteUser = async (ctx: Koa.Context) => {
-  const userRepo: Repository<userEntity> = getRepository(userEntity);
-
-  const user: userEntity = await userRepo.findOne(ctx.params.user_id);
+  const user: userEntity = await getConnection()
+    .createQueryBuilder()
+    .select('user')
+    .from(userEntity, 'user')
+    .where('user.id = :id', { id: ctx.params.user_id })
+    .getOne();
 
   if (!user) {
     ctx.throw(NOT_FOUND);
   }
 
-  await userRepo.delete(user);
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(userEntity)
+    .where('id = :id', { id: ctx.params.user_id })
+    .execute();
 
   ctx.status = NO_CONTENT;
 };

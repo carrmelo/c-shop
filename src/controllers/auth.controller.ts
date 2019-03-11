@@ -1,5 +1,5 @@
 import * as Koa from 'koa';
-import { Repository, getRepository } from 'typeorm';
+import { Repository, getRepository, getConnection } from 'typeorm';
 import {
   OK,
   NOT_FOUND,
@@ -39,7 +39,13 @@ export const signUp = async (ctx: Koa.Context) => {
   // Avoid case sensitivity on email
   user.email = email.toLowerCase();
 
-  user = await userRepo.save(user);
+  await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(userEntity)
+    .values(user)
+    .execute();
+  // user = await userRepo.save(user);
 
   // Token expiration set to 7 days
   const token = sign(
