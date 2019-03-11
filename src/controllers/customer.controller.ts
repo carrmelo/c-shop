@@ -11,18 +11,15 @@ import {
 import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { uploadFile, deleteFile } from '../service/upload.service';
-
-interface FileResolved {
-  key: string;
-  url: string;
-}
+import { FileResolved, Id } from '../lib/interfaces';
+import { File } from 'aws-sdk/lib/dynamodb/document_client';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
 
-  const customers = await customerRepo.find({
+  const customers: customerEntity[] = await customerRepo.find({
     relations: ['createdBy', 'modifiedBy'],
   });
 
@@ -35,9 +32,12 @@ export const getCustomer = async (ctx: Koa.Context) => {
     customerEntity,
   );
 
-  const customer = await customerRepo.findOne(ctx.params.customer_id, {
-    relations: ['createdBy', 'modifiedBy'],
-  });
+  const customer: customerEntity = await customerRepo.findOne(
+    ctx.params.customer_id,
+    {
+      relations: ['createdBy', 'modifiedBy'],
+    },
+  );
 
   if (!customer) {
     ctx.throw(NOT_FOUND);
@@ -55,6 +55,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const { name, surname } = ctx.request.body;
   const createdBy = ctx.state.user.id;
 
+  // Declaration of null properties of picture in case it is not uploaded
   let uploadedPicture: FileResolved = { key: null, url: null };
 
   if (picture) {
@@ -88,7 +89,9 @@ export const deleteCustomer = async (ctx: Koa.Context) => {
     customerEntity,
   );
 
-  const customer = await customerRepo.findOne(ctx.params.customer_id);
+  const customer: customerEntity = await customerRepo.findOne(
+    ctx.params.customer_id,
+  );
 
   if (!customer) {
     ctx.throw(NOT_FOUND);
@@ -108,7 +111,9 @@ export const editCustomer = async (ctx: Koa.Context) => {
     customerEntity,
   );
 
-  let customer = await customerRepo.findOne(ctx.params.customer_id);
+  let customer: customerEntity = await customerRepo.findOne(
+    ctx.params.customer_id,
+  );
 
   if (!customer) {
     ctx.throw(NOT_FOUND);
@@ -147,9 +152,9 @@ export const deletePicture = async (ctx: Koa.Context) => {
     customerEntity,
   );
 
-  const { customer_id } = ctx.params;
+  const { customer_id }: Id = ctx.params;
 
-  let customer = await customerRepo.findOne(customer_id);
+  let customer: customerEntity = await customerRepo.findOne(customer_id);
 
   if (!customer || !customer.pictureKey) {
     ctx.throw(NOT_FOUND);

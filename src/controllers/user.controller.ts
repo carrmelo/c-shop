@@ -12,11 +12,14 @@ import { hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
+import { UserBody } from '../lib/interfaces';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const users = await userRepo.find({ relations: ['created', 'modified'] });
+  const users: userEntity[] = await userRepo.find({
+    relations: ['created', 'modified'],
+  });
 
   ctx.status = OK;
   ctx.body = { data: users };
@@ -25,7 +28,7 @@ export const getAllUsers = async (ctx: Koa.Context) => {
 export const getUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const user = await userRepo.findOne(ctx.params.user_id, {
+  const user: userEntity = await userRepo.findOne(ctx.params.user_id, {
     relations: ['created', 'modified'],
   });
   if (!user) {
@@ -40,7 +43,7 @@ export const getUser = async (ctx: Koa.Context) => {
 export const createUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const { name, email, password, isAdmin } = ctx.request.body;
+  const { name, email, password, isAdmin }: userEntity = ctx.request.body;
 
   let user: userEntity = userRepo.create({
     name,
@@ -76,7 +79,7 @@ export const createUser = async (ctx: Koa.Context) => {
 export const deleteUser = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const user = await userRepo.findOne(ctx.params.user_id);
+  const user: userEntity = await userRepo.findOne(ctx.params.user_id);
 
   if (!user) {
     ctx.throw(NOT_FOUND);
@@ -92,7 +95,7 @@ export const editUser = async (ctx: Koa.Context) => {
 
   const { body } = ctx.request;
 
-  let user = await userRepo.findOne(ctx.params.user_id);
+  let user: userEntity = await userRepo.findOne(ctx.params.user_id);
 
   if (!user) {
     ctx.throw(NOT_FOUND);

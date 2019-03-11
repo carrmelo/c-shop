@@ -5,7 +5,9 @@ import Customer from '../models/customer.entity';
 export default (entity: User | Customer): Promise<boolean> => {
   // tslint:disable-next-line: ter-arrow-parens
   return validate(entity).then(errors => {
-    const messages = errors.map(error => error.constraints);
+    const [message] = errors.map(error => error.constraints);
+    console.log({ message });
+    // TODO return message to print to user
     return errors.length > 0 ? true : false;
   });
 };

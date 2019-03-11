@@ -12,8 +12,8 @@ import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 
-// TODO only one superuser
 export const signUp = async (ctx: Koa.Context) => {
+  // TODO Refeactor getRepository
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const [superUser] = await userRepo.find({ where: { superUser: true } });
@@ -36,6 +36,7 @@ export const signUp = async (ctx: Koa.Context) => {
   }
 
   user.password = await hash(password, 10);
+  // Avoid case sensitivity on email
   user.email = email.toLowerCase();
 
   user = await userRepo.save(user);
@@ -49,6 +50,7 @@ export const signUp = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
+  // Avoid send sensitive information to the client
   delete user.password;
   ctx.status = CREATED;
   ctx.body = { token, data: user };
@@ -58,8 +60,8 @@ export const signIn = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const { email, password } = ctx.request.body;
-  console.log(email, password);
 
+  // We select the password to compare and authenticate, and the other fields to send to the client
   const [user] = await userRepo.find({
     select: ['password', 'name', 'email', 'isAdmin'],
     where: { email },
@@ -79,6 +81,7 @@ export const signIn = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
+  // Avoid send sensitive information to the client
   delete user.password;
   ctx.status = OK;
   ctx.body = { token, data: { user } };
