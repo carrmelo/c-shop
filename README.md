@@ -12,7 +12,7 @@ Simple RESTful API (KOA && TypeScript && PosgreSQL) to admin customers and users
 
 After cloning the repo you'll have to :
 
-### Install local and external dependancies
+### Install local dependencies and external resources
 
 To install all dependencies clone the repository and run [Npm](https://www.npmjs.com/) `npm i` or [Yarn](https://yarnpkg.com/en/) `yarn install`
 
