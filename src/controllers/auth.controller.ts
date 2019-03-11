@@ -58,8 +58,14 @@ export const signIn = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const { email, password } = ctx.request.body;
+  console.log(email, password);
 
-  const [user] = await userRepo.find({ where: { email } });
+  const [user] = await userRepo.find({
+    select: ['password', 'name', 'email', 'isAdmin'],
+    where: { email },
+  });
+  console.log(user);
+
   if (!user) throw ctx.throw(NOT_FOUND);
 
   const valid = await compare(password, user.password);
@@ -73,6 +79,7 @@ export const signIn = async (ctx: Koa.Context) => {
     process.env.APP_SECRET,
   );
 
+  delete user.password;
   ctx.status = OK;
   ctx.body = { token, data: { user } };
 };
