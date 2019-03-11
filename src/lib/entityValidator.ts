@@ -7,7 +7,7 @@ export default (entity: User | Customer): Promise<boolean> => {
   return validate(entity).then(errors => {
     const [message] = errors.map(error => error.constraints);
     console.log({ message });
-    // TODO return message to print to user
+    // TODO return message to print to user instead of boolean
     return errors.length > 0 ? true : false;
   });
 };
