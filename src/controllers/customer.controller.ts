@@ -15,10 +15,12 @@ import { FileResolved, Id } from '../lib/interfaces';
 import { File } from 'aws-sdk/lib/dynamodb/document_client';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
+  // TODO refactor getRepository
   const customerRepo: Repository<customerEntity> = getRepository(
     customerEntity,
   );
 
+  // Generate relations
   const customers: customerEntity[] = await customerRepo.find({
     relations: ['createdBy', 'modifiedBy'],
   });

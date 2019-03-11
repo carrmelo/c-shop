@@ -12,7 +12,6 @@ import { hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
-import { UserBody } from '../lib/interfaces';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
