@@ -1,7 +1,7 @@
 {
   "name": "c-shop",
   "version": "1.0.0",
-  "description": "api for simple shop including customers and users",
+  "description": "api for a simple shop including customers and users",
   "repository": "c-shop",
   "main": "src/server.ts",
   "scripts": {
