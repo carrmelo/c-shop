@@ -1,6 +1,6 @@
-import { Repository, getRepository } from 'typeorm';
+import { Repository, getRepository, getConnection } from 'typeorm';
 import UserEntity from '../models/user.entity';
-import { Id } from '../lib/interfaces';
+import CustomerEntity from '../models/customer.entity';
 
 export const findOneUser = async (id: string) => {
   const user: UserEntity = await getRepository(UserEntity)
@@ -35,6 +35,24 @@ export const insertOneUser = async (newUser: UserEntity) => {
     .insert()
     .into(UserEntity)
     .values(newUser)
+    .execute();
+};
+
+export const deleteOneUser = async (id: string) => {
+  await getRepository(UserEntity)
+    .createQueryBuilder()
+    .delete()
+    .from(UserEntity)
+    .where('id = :id', { id })
+    .execute();
+};
+
+export const updateOneUser = async (updatedFields: any, id: string) => {
+  await getRepository(UserEntity)
+    .createQueryBuilder()
+    .update(UserEntity)
+    .set(updatedFields)
+    .where('id = :id', { id })
     .execute();
 };
 
