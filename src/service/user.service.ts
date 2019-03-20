@@ -1,10 +1,11 @@
 import { Repository, getRepository } from 'typeorm';
 import userEntity from '../models/user.entity';
 
-export const createUser = (user, signUp: boolean = false) => {
+export const createUser = async (user, signUp: boolean = false) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
   const [superUser] = await userRepo.find({ where: { superUser: true } });
+
   if (signUp && superUser) {
     throw ctx.throw(FORBIDDEN, 'A super user has already been created');
   }
