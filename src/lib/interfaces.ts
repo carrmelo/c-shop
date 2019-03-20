@@ -4,6 +4,6 @@ export interface FileResolved {
 }
 
 export interface Id {
-  customer_id?: string;
   user_id?: string;
+  customer_id?: string;
 }

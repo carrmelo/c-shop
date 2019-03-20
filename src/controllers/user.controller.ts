@@ -9,47 +9,37 @@ import {
   CREATED,
 } from 'http-status-codes';
 import { hash } from 'bcryptjs';
-import userEntity from '../models/user.entity';
+import UserEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { signToken } from '../lib/jwt';
+import {
+  findOneUser,
+  findAllUsers,
+  insertOneUser,
+  createOneUser,
+} from '../service/user.service';
+import { create } from 'domain';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
-  const userRepo: Repository<userEntity> = getRepository(userEntity);
-
-  const users: userEntity[] = await userRepo.find({
-    relations: ['created', 'modified'],
-  });
+  const users: UserEntity[] = await findAllUsers();
 
   ctx.status = OK;
   ctx.body = { data: users };
 };
 
 export const getUser = async (ctx: Koa.Context) => {
-  const userRepo: Repository<userEntity> = getRepository(userEntity);
+  const user: UserEntity = await findOneUser(ctx.params.user_id);
 
-  const user: userEntity = await userRepo.findOne(ctx.params.user_id, {
-    relations: ['created', 'modified'],
-  });
-  if (!user) {
-    ctx.throw(NOT_FOUND);
-  }
+  if (!user) ctx.throw(NOT_FOUND);
 
-  // delete user.password;
   ctx.status = OK;
   ctx.body = { data: { user } };
 };
 
 export const createUser = async (ctx: Koa.Context) => {
-  const userRepo: Repository<userEntity> = getRepository(userEntity);
+  const { email, password }: UserEntity = ctx.request.body;
 
-  const { name, email, password, isAdmin }: userEntity = ctx.request.body;
-
-  let user: userEntity = userRepo.create({
-    name,
-    email,
-    password,
-    isAdmin,
-  });
+  const user: UserEntity = createOneUser(ctx.request.body);
 
   if (await anyFieldIsWrong(user)) {
     ctx.throw(BAD_REQUEST, 'Please check your user fields');
@@ -58,7 +48,8 @@ export const createUser = async (ctx: Koa.Context) => {
   user.password = await hash(password, 10);
   user.email = email.toLowerCase();
 
-  user = await userRepo.save(user);
+  await insertOneUser(user);
+  // user = await userRepo.save(user);
 
   // Token expiration set to 1 Hour (default)
   const token = signToken(user.id);
@@ -70,31 +61,27 @@ export const createUser = async (ctx: Koa.Context) => {
 };
 
 export const deleteUser = async (ctx: Koa.Context) => {
-  const userRepo: Repository<userEntity> = getRepository(userEntity);
-
-  const user: userEntity = await userRepo.findOne(ctx.params.user_id);
+  const user: UserEntity = await findOneUser(ctx.params.user_id);
 
   if (!user) {
     ctx.throw(NOT_FOUND);
   }
 
-  await userRepo.delete(user);
+  // await userRepo.delete(user);
 
   ctx.status = NO_CONTENT;
 };
 
 export const editUser = async (ctx: Koa.Context) => {
-  const userRepo: Repository<userEntity> = getRepository(userEntity);
+  let user: UserEntity = await findOneUser(ctx.params.user_id);
 
   const { body } = ctx.request;
-
-  let user: userEntity = await userRepo.findOne(ctx.params.user_id);
 
   if (!user) {
     ctx.throw(NOT_FOUND);
   }
 
-  user = await userRepo.merge(user, body);
+  // user = await userRepo.merge(user, body);
 
   if (await anyFieldIsWrong(user)) {
     ctx.throw(BAD_REQUEST, 'Please check your customer fields');
@@ -103,7 +90,7 @@ export const editUser = async (ctx: Koa.Context) => {
   if (body.password) user.password = await hash(body.password, 10);
   if (body.email) user.email.toLowerCase();
 
-  userRepo.save(user);
+  // userRepo.save(user);
   ctx.status = ACCEPTED;
   ctx.body = { data: { user } };
 };
