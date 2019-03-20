@@ -10,25 +10,12 @@ const customersOpts: Router.IRouterOptions = {
 const customers: Router = new Router(customersOpts);
 
 customers
-  .get('/', authMiddleware, customerController.getAllCustomers)
-  .get('/:customer_id', authMiddleware, customerController.getCustomer)
-  .post(
-    '/',
-    authMiddleware,
-    pictureMiddleware,
-    customerController.createCustomer,
-  )
-  .delete('/:customer_id', authMiddleware, customerController.deleteCustomer)
-  .patch(
-    '/:customer_id',
-    authMiddleware,
-    pictureMiddleware,
-    customerController.editCustomer,
-  )
-  .patch(
-    '/remove-pic/:customer_id',
-    authMiddleware,
-    customerController.deletePicture,
-  );
+  .use(authMiddleware)
+  .get('/', customerController.getAllCustomers)
+  .get('/:customer_id', customerController.getCustomer)
+  .post('/', pictureMiddleware, customerController.createCustomer)
+  .delete('/:customer_id', customerController.deleteCustomer)
+  .patch('/:customer_id', pictureMiddleware, customerController.editCustomer)
+  .patch('/remove-pic/:customer_id', customerController.deletePicture);
 
 export { customers };
