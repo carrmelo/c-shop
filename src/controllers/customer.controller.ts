@@ -12,7 +12,6 @@ import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { uploadFile, deleteFile } from '../service/upload.service';
 import { FileResolved, Id } from '../lib/interfaces';
-import { File } from 'aws-sdk/lib/dynamodb/document_client';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
   // TODO refactor getRepository
