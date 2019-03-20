@@ -11,27 +11,11 @@ const userOpts: Router.IRouterOptions = {
 const users: Router = new Router(userOpts);
 
 users
-  .get('/', authMiddleware, adminMiddleware, userController.getAllUsers)
-  .get('/:user_id', authMiddleware, adminMiddleware, userController.getUser)
-  .post(
-    '/',
-    authMiddleware,
-    adminMiddleware,
-    regexMiddleware,
-    userController.createUser,
-  )
-  .delete(
-    '/:user_id',
-    authMiddleware,
-    adminMiddleware,
-    userController.deleteUser,
-  )
-  .patch(
-    '/:user_id',
-    authMiddleware,
-    adminMiddleware,
-    regexMiddleware,
-    userController.editUser,
-  );
+  .use(authMiddleware, adminMiddleware)
+  .get('/', userController.getAllUsers)
+  .get('/:user_id', userController.getUser)
+  .post('/', regexMiddleware, userController.createUser)
+  .delete('/:user_id', userController.deleteUser)
+  .patch('/:user_id', regexMiddleware, userController.editUser);
 
 export { users };
