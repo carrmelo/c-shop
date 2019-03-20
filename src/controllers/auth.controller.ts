@@ -59,14 +59,17 @@ export const signUp = async (ctx: Koa.Context) => {
 export const signIn = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const { email, password } = ctx.request.body;
+  const { password } = ctx.request.body;
+
+  const email = ctx.request.body.email.toLowerCase();
+
+  console.log(email);
 
   // We select the password to compare and authenticate, and the other fields to send to the client
   const [user] = await userRepo.find({
     select: ['password', 'name', 'email', 'isAdmin'],
     where: { email },
   });
-  console.log(user);
 
   if (!user) throw ctx.throw(NOT_FOUND);
 
