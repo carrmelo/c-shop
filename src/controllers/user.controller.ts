@@ -12,6 +12,7 @@ import { hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
+import { signToken } from '../lib/jwt';
 
 export const getAllUsers = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
@@ -60,14 +61,8 @@ export const createUser = async (ctx: Koa.Context) => {
 
   user = await userRepo.save(user);
 
-  // Token expiration set to 1 Hour
-  const token = sign(
-    {
-      id: user.id,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-    },
-    process.env.APP_SECRET,
-  );
+  // Token expiration set to 1 Hour (default)
+  const token = signToken(user.id);
 
   delete user.password;
   delete user.superUser;
