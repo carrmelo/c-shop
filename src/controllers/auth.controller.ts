@@ -8,9 +8,9 @@ import {
   FORBIDDEN,
 } from 'http-status-codes';
 import { hash, compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
+import { signToken } from '../lib/jwt';
 
 export const signUp = async (ctx: Koa.Context) => {
   // TODO Refeactor getRepository
@@ -42,13 +42,7 @@ export const signUp = async (ctx: Koa.Context) => {
   user = await userRepo.save(user);
 
   // Token expiration set to 7 days
-  const token = sign(
-    {
-      id: user.id,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
-    },
-    process.env.APP_SECRET,
-  );
+  const token = signToken(user.id, [24, 7]);
 
   // Avoid send sensitive information to the client
   delete user.password;
@@ -59,27 +53,25 @@ export const signUp = async (ctx: Koa.Context) => {
 export const signIn = async (ctx: Koa.Context) => {
   const userRepo: Repository<userEntity> = getRepository(userEntity);
 
-  const { email, password } = ctx.request.body;
+  const { password } = ctx.request.body;
+
+  const email = ctx.request.body.email.toLowerCase();
 
   // We select the password to compare and authenticate, and the other fields to send to the client
   const [user] = await userRepo.find({
-    select: ['password', 'name', 'email', 'isAdmin'],
+    select: ['id', 'password', 'name', 'email', 'isAdmin'],
     where: { email },
   });
-  console.log(user);
 
   if (!user) throw ctx.throw(NOT_FOUND);
 
   const valid = await compare(password, user.password);
   if (!valid) throw ctx.throw(NOT_FOUND);
 
-  const token = sign(
-    {
-      id: user.id,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-    },
-    process.env.APP_SECRET,
-  );
+  console.log(user);
+
+  // Token expiration set to 1 hour (default)
+  const token = signToken(user.id);
 
   // Avoid send sensitive information to the client
   delete user.password;
