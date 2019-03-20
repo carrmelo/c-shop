@@ -8,7 +8,6 @@ import {
   FORBIDDEN,
 } from 'http-status-codes';
 import { hash, compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { signToken } from '../lib/jwt';
@@ -60,7 +59,7 @@ export const signIn = async (ctx: Koa.Context) => {
 
   // We select the password to compare and authenticate, and the other fields to send to the client
   const [user] = await userRepo.find({
-    select: ['password', 'name', 'email', 'isAdmin'],
+    select: ['id', 'password', 'name', 'email', 'isAdmin'],
     where: { email },
   });
 
@@ -68,6 +67,8 @@ export const signIn = async (ctx: Koa.Context) => {
 
   const valid = await compare(password, user.password);
   if (!valid) throw ctx.throw(NOT_FOUND);
+
+  console.log(user);
 
   // Token expiration set to 1 hour (default)
   const token = signToken(user.id);

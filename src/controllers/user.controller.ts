@@ -9,7 +9,6 @@ import {
   CREATED,
 } from 'http-status-codes';
 import { hash } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
 import userEntity from '../models/user.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { signToken } from '../lib/jwt';
