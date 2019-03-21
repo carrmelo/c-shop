@@ -3,6 +3,7 @@ import UserEntity from '../models/user.entity';
 import CustomerEntity from '../models/customer.entity';
 import { CustomerBody } from '../lib/interfaces';
 
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const findOneUser = async (id: string) => {
   const user: UserEntity = await getRepository(UserEntity)
     .createQueryBuilder('user')
@@ -13,7 +14,7 @@ export const findOneUser = async (id: string) => {
 
   return user;
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const findOneCustomer = async (id: string) => {
   const customer: CustomerEntity = await getRepository(CustomerEntity)
     .createQueryBuilder('customer')
@@ -24,7 +25,7 @@ export const findOneCustomer = async (id: string) => {
 
   return customer;
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const findAllUsers = async () => {
   const users: UserEntity[] = await getRepository(UserEntity)
     .createQueryBuilder('user')
@@ -34,7 +35,7 @@ export const findAllUsers = async () => {
 
   return users;
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const findAllCustomers = async () => {
   const customers: CustomerEntity[] = await getRepository(CustomerEntity)
     .createQueryBuilder('customer')
@@ -44,13 +45,13 @@ export const findAllCustomers = async () => {
 
   return customers;
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const createOneUser = (userBody: UserEntity) => {
   const userRepo: Repository<UserEntity> = getRepository(UserEntity);
   const user: UserEntity = userRepo.create(userBody);
   return user;
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const createOneCustomer = (customerBody: CustomerBody) => {
   const customerRepo: Repository<CustomerEntity> = getRepository(
     CustomerEntity,
@@ -58,7 +59,7 @@ export const createOneCustomer = (customerBody: CustomerBody) => {
   const customer: CustomerEntity = customerRepo.create(customerBody);
   return customer;
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const insertOneUser = async (newUser: UserEntity) => {
   await getRepository(UserEntity)
     .createQueryBuilder()
@@ -67,7 +68,7 @@ export const insertOneUser = async (newUser: UserEntity) => {
     .values(newUser)
     .execute();
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const insertOneCustomer = async (newCustomer: CustomerEntity) => {
   await getRepository(CustomerEntity)
     .createQueryBuilder()
@@ -76,7 +77,7 @@ export const insertOneCustomer = async (newCustomer: CustomerEntity) => {
     .values(newCustomer)
     .execute();
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const deleteOneUser = async (id: string) => {
   await getRepository(UserEntity)
     .createQueryBuilder()
@@ -85,7 +86,7 @@ export const deleteOneUser = async (id: string) => {
     .where('id = :id', { id })
     .execute();
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const deleteOneCustomer = async (id: string) => {
   await getRepository(CustomerEntity)
     .createQueryBuilder()
@@ -94,7 +95,7 @@ export const deleteOneCustomer = async (id: string) => {
     .where('id = :id', { id })
     .execute();
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const updateOneUser = async (updatedFields: any, id: string) => {
   await getRepository(UserEntity)
     .createQueryBuilder()
@@ -103,7 +104,7 @@ export const updateOneUser = async (updatedFields: any, id: string) => {
     .where('id = :id', { id })
     .execute();
 };
-
+// TODO solve typing of entities at parameters to refactor User and Customer in One
 export const updateOneCustomer = async (updatedFields: any, id: string) => {
   await getRepository(CustomerEntity)
     .createQueryBuilder()
@@ -112,50 +113,3 @@ export const updateOneCustomer = async (updatedFields: any, id: string) => {
     .where('id = :id', { id })
     .execute();
 };
-
-//   const { name, email, password, isAdmin } = CustomerBody;
-
-//   if (await anyFieldIsWrong(user)) {
-//     ctx.throw(BAD_REQUEST, 'Please check your user fields');
-//   }
-
-//   user.password = await hash(password, 10);
-//   // Avoid case sensitivity on email
-//   user.email = email.toLowerCase();
-
-//   await getConnection()
-//     .createQueryBuilder()
-//     .insert()
-//     .into(userEntity)
-//     .values(user)
-//     .execute();
-//   // user = await userRepo.save(user);
-
-//   // Token expiration set to 7 days
-//   const token = sign(
-//     {
-//       id: user.id,
-//       exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
-//     },
-//     process.env.APP_SECRET,
-//   );
-
-//   // Avoid send sensitive information to the client
-//   delete user.password;
-//   ctx.status = CREATED;
-//   ctx.body = { token, data: user };
-// };
-
-// const [superUser] = await userRepo.find({ where: { superUser: true } });
-
-//   if (signUp && superUser) {
-//     throw ctx.throw(FORBIDDEN, 'A super user has already been created');
-//   }
-
-// const user: userEntity = userRepo.create({
-//   name,
-//   email,
-//   password,
-//   isAdmin: signUp ? true : isAdmin,
-//   superUser: signUp ? true : false,
-// });
