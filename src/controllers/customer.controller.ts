@@ -12,18 +12,14 @@ import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
 import { uploadFile, deleteFile } from '../service/upload.service';
 import { FileResolved, Id } from '../lib/interfaces';
+import {
+  findAllCustomers,
+  createOneCustomer,
+  insertOneCustomer,
+} from '../service/entities.service';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
-  // TODO refactor getRepository
-  const customerRepo: Repository<customerEntity> = getRepository(
-    customerEntity,
-  );
-
-  // Generate relations
-  const customers: customerEntity[] = await customerRepo.find({
-    relations: ['createdBy', 'modifiedBy'],
-  });
-
+  const customers: customerEntity[] = await findAllCustomers();
   ctx.status = OK;
   ctx.body = { data: { customers } };
 };
@@ -49,16 +45,12 @@ export const getCustomer = async (ctx: Koa.Context) => {
 };
 
 export const createCustomer = async (ctx: Koa.Context) => {
-  const customerRepo: Repository<customerEntity> = getRepository(
-    customerEntity,
-  );
   const { picture } = ctx.request.files;
   const { name, surname } = ctx.request.body;
   const createdBy = ctx.state.user.id;
 
   // Declaration of null properties of picture in case it is not uploaded
   let uploadedPicture: FileResolved = { key: null, url: null };
-
   if (picture) {
     uploadedPicture = await uploadFile({
       fileName: picture.name,
@@ -67,20 +59,21 @@ export const createCustomer = async (ctx: Koa.Context) => {
     });
   }
 
-  let customer: customerEntity = customerRepo.create({
+  const customerBody = {
     name,
     surname,
     createdBy,
     pictureUrl: uploadedPicture.url,
     pictureKey: uploadedPicture.key,
-  });
+  };
+
+  const customer: customerEntity = await createOneCustomer(customerBody);
 
   if (await anyFieldIsWrong(customer)) {
     ctx.throw(BAD_REQUEST, 'Please check your customer fields');
   }
 
-  customer = await customerRepo.save(customer);
-
+  await insertOneCustomer(customer);
   ctx.status = CREATED;
   ctx.body = { data: customer };
 };

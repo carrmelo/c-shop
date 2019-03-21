@@ -1,6 +1,7 @@
 import { Repository, getRepository, getConnection } from 'typeorm';
 import UserEntity from '../models/user.entity';
 import CustomerEntity from '../models/customer.entity';
+import { CustomerBody } from '../lib/interfaces';
 
 export const findOneUser = async (id: string) => {
   const user: UserEntity = await getRepository(UserEntity)
@@ -23,10 +24,28 @@ export const findAllUsers = async () => {
   return users;
 };
 
+export const findAllCustomers = async () => {
+  const customers: CustomerEntity[] = await getRepository(CustomerEntity)
+    .createQueryBuilder('customer')
+    .leftJoinAndSelect('customer.createdBy', 'created')
+    .leftJoinAndSelect('customer.modifiedBy', 'modified')
+    .getMany();
+
+  return customers;
+};
+
 export const createOneUser = (userBody: UserEntity) => {
   const userRepo: Repository<UserEntity> = getRepository(UserEntity);
   const user: UserEntity = userRepo.create(userBody);
   return user;
+};
+
+export const createOneCustomer = (customerBody: CustomerBody) => {
+  const customerRepo: Repository<CustomerEntity> = getRepository(
+    CustomerEntity,
+  );
+  const customer: CustomerEntity = customerRepo.create(customerBody);
+  return customer;
 };
 
 export const insertOneUser = async (newUser: UserEntity) => {
@@ -35,6 +54,15 @@ export const insertOneUser = async (newUser: UserEntity) => {
     .insert()
     .into(UserEntity)
     .values(newUser)
+    .execute();
+};
+
+export const insertOneCustomer = async (newCustomer: CustomerEntity) => {
+  await getRepository(CustomerEntity)
+    .createQueryBuilder()
+    .insert()
+    .into(CustomerEntity)
+    .values(newCustomer)
     .execute();
 };
 
