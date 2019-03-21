@@ -1,5 +1,7 @@
 import * as aws from 'aws-sdk';
 import * as fs from 'fs';
+import { File } from 'formidable';
+import { FileResolved } from '../lib/interfaces';
 
 interface FileStructure {
   fileName: string;
@@ -7,16 +9,23 @@ interface FileStructure {
   fileType: string;
 }
 
-interface FileResolved {
-  key: string;
-  url: string;
-}
-
 const s3Controller = (): any => {
   return new aws.S3({
     region: process.env.AWS_REGION,
     apiVersion: '2006-03-01',
   });
+};
+
+export const definePicture = async (picture: File) => {
+  let uploadedPicture: FileResolved = { key: null, url: null };
+  if (picture) {
+    uploadedPicture = await uploadFile({
+      fileName: picture.name,
+      filePath: picture.path,
+      fileType: picture.type,
+    });
+  }
+  return uploadedPicture;
 };
 
 export const uploadFile = async ({
