@@ -10,7 +10,11 @@ import {
 } from 'http-status-codes';
 import customerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
-import { uploadFile, deleteFile } from '../service/upload.service';
+import {
+  uploadFile,
+  deleteFile,
+  definePicture,
+} from '../service/upload.service';
 import { FileResolved, Id } from '../lib/interfaces';
 import {
   findAllCustomers,
@@ -50,14 +54,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const createdBy = ctx.state.user.id;
 
   // Declaration of null properties of picture in case it is not uploaded
-  let uploadedPicture: FileResolved = { key: null, url: null };
-  if (picture) {
-    uploadedPicture = await uploadFile({
-      fileName: picture.name,
-      filePath: picture.path,
-      fileType: picture.type,
-    });
-  }
+  const uploadedPicture: FileResolved = await definePicture(picture);
 
   const customerBody = {
     name,
