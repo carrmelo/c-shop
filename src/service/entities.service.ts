@@ -86,6 +86,15 @@ export const deleteOneUser = async (id: string) => {
     .execute();
 };
 
+export const deleteOneCustomer = async (id: string) => {
+  await getRepository(CustomerEntity)
+    .createQueryBuilder()
+    .delete()
+    .from(CustomerEntity)
+    .where('id = :id', { id })
+    .execute();
+};
+
 export const updateOneUser = async (updatedFields: any, id: string) => {
   await getRepository(UserEntity)
     .createQueryBuilder()
@@ -95,7 +104,16 @@ export const updateOneUser = async (updatedFields: any, id: string) => {
     .execute();
 };
 
-//   const { name, email, password, isAdmin } = userBody;
+export const updateOneCustomer = async (updatedFields: any, id: string) => {
+  await getRepository(CustomerEntity)
+    .createQueryBuilder()
+    .update(CustomerEntity)
+    .set(updatedFields)
+    .where('id = :id', { id })
+    .execute();
+};
+
+//   const { name, email, password, isAdmin } = CustomerBody;
 
 //   if (await anyFieldIsWrong(user)) {
 //     ctx.throw(BAD_REQUEST, 'Please check your user fields');

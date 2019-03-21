@@ -1,5 +1,4 @@
 import * as Koa from 'koa';
-import { getRepository, Repository } from 'typeorm';
 import {
   OK,
   NOT_FOUND,
@@ -8,30 +7,28 @@ import {
   ACCEPTED,
   BAD_REQUEST,
 } from 'http-status-codes';
-import customerEntity from '../models/customer.entity';
+import CustomerEntity from '../models/customer.entity';
 import anyFieldIsWrong from '../lib/entityValidator';
-import {
-  uploadFile,
-  deleteFile,
-  definePicture,
-} from '../service/upload.service';
-import { FileResolved, Id } from '../lib/interfaces';
+import { deleteFile, definePicture } from '../service/upload.service';
+import { FileResolved, CustomerBody } from '../lib/interfaces';
 import {
   findAllCustomers,
   createOneCustomer,
   insertOneCustomer,
   findOneCustomer,
+  deleteOneCustomer,
+  updateOneCustomer,
 } from '../service/entities.service';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
-  const customers: customerEntity[] = await findAllCustomers();
+  const customers: CustomerEntity[] = await findAllCustomers();
   ctx.status = OK;
   ctx.body = { data: { customers } };
 };
 
 export const getCustomer = async (ctx: Koa.Context) => {
   const { customer_id } = ctx.params;
-  const customer: customerEntity = await findOneCustomer(customer_id);
+  const customer: CustomerEntity = await findOneCustomer(customer_id);
   if (!customer) ctx.throw(NOT_FOUND);
   ctx.status = OK;
   ctx.body = { data: { customer } };
@@ -51,7 +48,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
     pictureUrl: uploadedPicture.url,
     pictureKey: uploadedPicture.key,
   };
-  const customer: customerEntity = await createOneCustomer(customerBody);
+  const customer: CustomerEntity = await createOneCustomer(customerBody);
   if (await anyFieldIsWrong(customer)) {
     ctx.throw(BAD_REQUEST, 'Please check your customer fields');
   }
@@ -62,93 +59,50 @@ export const createCustomer = async (ctx: Koa.Context) => {
 };
 
 export const deleteCustomer = async (ctx: Koa.Context) => {
-  const customerRepo: Repository<customerEntity> = getRepository(
-    customerEntity,
-  );
-
-  const customer: customerEntity = await customerRepo.findOne(
-    ctx.params.customer_id,
-  );
-
-  if (!customer) {
-    ctx.throw(NOT_FOUND);
-  }
-
-  if (customer.pictureKey) {
-    await deleteFile(customer.pictureKey);
-  }
-
-  await customerRepo.delete(customer);
-
+  const { customer_id } = ctx.params;
+  const customer: CustomerEntity = await findOneCustomer(customer_id);
+  if (!customer) ctx.throw(NOT_FOUND);
+  if (customer.pictureKey) await deleteFile(customer.pictureKey);
+  await deleteOneCustomer(customer_id);
   ctx.status = NO_CONTENT;
 };
 
 export const editCustomer = async (ctx: Koa.Context) => {
-  const customerRepo: Repository<customerEntity> = getRepository(
-    customerEntity,
-  );
-
-  let customer: customerEntity = await customerRepo.findOne(
-    ctx.params.customer_id,
-  );
-
-  if (!customer) {
-    ctx.throw(NOT_FOUND);
-  }
+  const { customer_id } = ctx.params;
+  const customer: CustomerEntity = await findOneCustomer(customer_id);
+  if (!customer) ctx.throw(NOT_FOUND);
 
   const { body } = ctx.request;
   const { picture } = ctx.request.files;
-
   if (picture) {
-    const { key, url } = await uploadFile({
-      fileName: picture.name,
-      filePath: picture.path,
-      fileType: picture.type,
-    });
+    const { key, url } = await definePicture(picture);
     body.pictureUrl = url;
     body.pictureKey = key;
     await deleteFile(customer.pictureKey);
   }
-
   body.modifiedBy = ctx.state.user.id;
-
-  customer = await customerRepo.merge(customer, body);
-
-  if (await anyFieldIsWrong(customer)) {
+  if (await anyFieldIsWrong(body)) {
     ctx.throw(BAD_REQUEST, 'Please check your customer fields');
   }
 
-  await customerRepo.save(customer);
-
+  await updateOneCustomer(body, customer_id);
+  const updatedCustomer: CustomerEntity = await findOneCustomer(customer_id);
   ctx.status = ACCEPTED;
-  ctx.body = { data: { customer } };
+  ctx.body = { data: { customer: updatedCustomer } };
 };
 
 export const deletePicture = async (ctx: Koa.Context) => {
-  const customerRepo: Repository<customerEntity> = getRepository(
-    customerEntity,
-  );
-
-  const { customer_id }: Id = ctx.params;
-
-  let customer: customerEntity = await customerRepo.findOne(customer_id);
-
-  if (!customer || !customer.pictureKey) {
-    ctx.throw(NOT_FOUND);
-  }
-
-  if (customer.pictureKey) {
-    await deleteFile(customer.pictureKey);
-  }
-
-  await customerRepo.update(customer_id, {
+  const { customer_id } = ctx.params;
+  const customer: CustomerEntity = await findOneCustomer(customer_id);
+  if (!customer || !customer.pictureKey) ctx.throw(NOT_FOUND);
+  if (customer.pictureKey) await deleteFile(customer.pictureKey);
+  const customerBody: CustomerBody = {
     pictureKey: null,
     pictureUrl: null,
     modifiedBy: ctx.state.user.id,
-  });
-
-  customer = await customerRepo.findOne(customer_id);
-
+  };
+  await updateOneCustomer(customerBody, customer_id);
+  const updatedCustomer: CustomerEntity = await findOneCustomer(customer_id);
   ctx.status = ACCEPTED;
-  ctx.body = { data: { customer } };
+  ctx.body = { data: { customer: updatedCustomer } };
 };

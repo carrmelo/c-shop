@@ -11,9 +11,10 @@ export interface Id {
 }
 
 export interface CustomerBody {
-  name: string;
-  surname: string;
-  createdBy: User;
-  pictureUrl: string | null;
-  pictureKey: string | null;
+  name?: string;
+  surname?: string;
+  createdBy?: User;
+  modifiedBy?: User;
+  pictureUrl?: string | null;
+  pictureKey?: string | null;
 }
