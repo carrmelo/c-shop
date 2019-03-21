@@ -20,6 +20,7 @@ import {
   findAllCustomers,
   createOneCustomer,
   insertOneCustomer,
+  findOneCustomer,
 } from '../service/entities.service';
 
 export const getAllCustomers = async (ctx: Koa.Context) => {
@@ -29,21 +30,9 @@ export const getAllCustomers = async (ctx: Koa.Context) => {
 };
 
 export const getCustomer = async (ctx: Koa.Context) => {
-  const customerRepo: Repository<customerEntity> = getRepository(
-    customerEntity,
-  );
-
-  const customer: customerEntity = await customerRepo.findOne(
-    ctx.params.customer_id,
-    {
-      relations: ['createdBy', 'modifiedBy'],
-    },
-  );
-
-  if (!customer) {
-    ctx.throw(NOT_FOUND);
-  }
-
+  const { customer_id } = ctx.params;
+  const customer: customerEntity = await findOneCustomer(customer_id);
+  if (!customer) ctx.throw(NOT_FOUND);
   ctx.status = OK;
   ctx.body = { data: { customer } };
 };
@@ -53,9 +42,8 @@ export const createCustomer = async (ctx: Koa.Context) => {
   const { name, surname } = ctx.request.body;
   const createdBy = ctx.state.user.id;
 
-  // Declaration of null properties of picture in case it is not uploaded
+  // Construct customer body for creation
   const uploadedPicture: FileResolved = await definePicture(picture);
-
   const customerBody = {
     name,
     surname,
@@ -63,9 +51,7 @@ export const createCustomer = async (ctx: Koa.Context) => {
     pictureUrl: uploadedPicture.url,
     pictureKey: uploadedPicture.key,
   };
-
   const customer: customerEntity = await createOneCustomer(customerBody);
-
   if (await anyFieldIsWrong(customer)) {
     ctx.throw(BAD_REQUEST, 'Please check your customer fields');
   }

@@ -14,6 +14,17 @@ export const findOneUser = async (id: string) => {
   return user;
 };
 
+export const findOneCustomer = async (id: string) => {
+  const customer: CustomerEntity = await getRepository(CustomerEntity)
+    .createQueryBuilder('customer')
+    .leftJoinAndSelect('customer.createdBy', 'created')
+    .leftJoinAndSelect('customer.modifiedBy', 'modified')
+    .where('customer.id = :id', { id })
+    .getOne();
+
+  return customer;
+};
+
 export const findAllUsers = async () => {
   const users: UserEntity[] = await getRepository(UserEntity)
     .createQueryBuilder('user')
